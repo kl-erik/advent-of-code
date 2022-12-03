@@ -1,12 +1,14 @@
 package days.day1;
 
+import days.Day;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Scanner;
 
-public class Day1 {
+public class Day1 implements Day {
     public int puzzle1(File input) throws FileNotFoundException {
         PriorityQueue<Integer> maxes = getMaxes(input);
         return sum(1, maxes);
