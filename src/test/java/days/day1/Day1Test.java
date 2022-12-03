@@ -1,5 +1,6 @@
-package days;
+package days.day1;
 
+import days.day1.Day1;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
