@@ -22,7 +22,7 @@ class Day4Test {
     @Test
     void testPuzzle2() {
         try {
-            assertEquals(1, day.puzzle2(new File("src/main/resources/example_4.txt")));
+            assertEquals(4, day.puzzle2(new File("src/main/resources/example_4.txt")));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
