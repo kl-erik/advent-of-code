@@ -11,6 +11,19 @@ public enum Outcome {
         this.score = score;
     }
 
+    public static Outcome fromChar(char c) {
+        switch (c) {
+            case 'X':
+                return LOSS;
+            case 'Y':
+                return DRAW;
+            case 'Z':
+                return WIN;
+            default:
+                throw new IllegalStateException("Unexpected value: " + c);
+        }
+    }
+
     public int getScore() {
         return score;
     }

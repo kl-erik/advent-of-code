@@ -19,4 +19,12 @@ class Day2Test {
         }
     }
 
+    @Test
+    void testPuzzle2() {
+        try {
+            assertEquals(12, day.puzzle2(new File("src/main/resources/example_2.txt")));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

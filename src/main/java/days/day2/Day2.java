@@ -12,9 +12,9 @@ public class Day2 implements Day {
         int totalScore = 0;
 
         while (scanner.hasNextLine()) {
-            String hands = scanner.nextLine();
-            Hand otherHand = Hand.fromChar(hands.charAt(0));
-            Hand myHand = Hand.fromChar(hands.charAt(2));
+            String round = scanner.nextLine();
+            Hand otherHand = Hand.fromChar(round.charAt(0));
+            Hand myHand = Hand.fromChar(round.charAt(2));
             Outcome outcome = myHand.compare(otherHand);
             totalScore += outcome.getScore() + myHand.getScore();
         }
@@ -24,6 +24,22 @@ public class Day2 implements Day {
 
     @Override
     public int puzzle2(File file) throws FileNotFoundException {
-        return 0;
+        Scanner scanner = new Scanner(file);
+        int totalScore = 0;
+
+        while (scanner.hasNextLine()) {
+            String round = scanner.nextLine();
+            Hand otherHand = Hand.fromChar(round.charAt(0));
+            Outcome outcome = Outcome.fromChar(round.charAt(2));
+
+            for (Hand hand : Hand.values()) {
+                if (hand.compare(otherHand) == outcome) {
+                    totalScore += outcome.getScore() + hand.getScore();
+                    break;
+                }
+            }
+        }
+
+        return totalScore;
     }
 }
