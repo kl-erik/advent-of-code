@@ -24,6 +24,16 @@ public enum Outcome {
         }
     }
 
+    public Hand toHand(Hand otherHand) {
+        for (Hand hand : Hand.values()) {
+            if (hand.compare(otherHand) == this) {
+                return hand;
+            }
+        }
+
+        throw new IllegalStateException("Unexpected value: " + otherHand);
+    }
+
     public int getScore() {
         return score;
     }

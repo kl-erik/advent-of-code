@@ -31,13 +31,8 @@ public class Day2 implements Day {
             String round = scanner.nextLine();
             Hand otherHand = Hand.fromChar(round.charAt(0));
             Outcome outcome = Outcome.fromChar(round.charAt(2));
-
-            for (Hand hand : Hand.values()) {
-                if (hand.compare(otherHand) == outcome) {
-                    totalScore += outcome.getScore() + hand.getScore();
-                    break;
-                }
-            }
+            Hand myHand = outcome.toHand(otherHand);
+            totalScore += outcome.getScore() + myHand.getScore();
         }
 
         return totalScore;
