@@ -4,10 +4,7 @@ import days.Day;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class Day3 implements Day {
     char[] priorities = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -19,10 +16,11 @@ public class Day3 implements Day {
         int sum = 0;
 
         while (scanner.hasNextLine()) {
-            String items = scanner.nextLine();
-            char[] compartment1 = items.substring(0, items.length() / 2).toCharArray();
-            char[] compartment2 = items.substring(items.length() / 2).toCharArray();
-            char item = findItem(compartment1, compartment2);
+            String rucksack = scanner.nextLine();
+            Set<Character> compartment1 = toSet(rucksack.substring(0, rucksack.length() / 2));
+            Set<Character> compartment2 = toSet(rucksack.substring(rucksack.length() / 2));
+            compartment1.retainAll(compartment2);
+            char item = new ArrayList<>(compartment1).get(0);
             int priority = getPriority(item);
             sum += priority;
         }
@@ -30,22 +28,32 @@ public class Day3 implements Day {
         return sum;
     }
 
-    private static char findItem(char[] compartment1, char[] compartment2) {
-        Set<Character> visited = new HashSet<>();
+    @Override
+    public int puzzle2(File file) throws FileNotFoundException {
+        Scanner scanner = new Scanner(file);
+        int sum = 0;
 
-        for (char item1 : compartment1) {
-            if (!visited.contains(item1)) {
-                for (char item2 : compartment2) {
-                    if (item1 == item2) {
-                        return item1;
-                    }
-                }
-
-                visited.add(item1);
-            }
+        while (scanner.hasNextLine()) {
+            Set<Character> rucksack1 = toSet(scanner.nextLine());
+            Set<Character> rucksack2 = toSet(scanner.nextLine());
+            Set<Character> rucksack3 = toSet(scanner.nextLine());
+            rucksack1.retainAll(rucksack2);
+            rucksack1.retainAll(rucksack3);
+            char item = new ArrayList<>(rucksack1).get(0);
+            int priority = getPriority(item);
+            sum += priority;
         }
 
-        throw new NoSuchElementException();
+        return sum;
+    }
+
+    private Set<Character> toSet(String string) {
+        Set<Character> set = new HashSet<>();
+
+        for (char c : string.toCharArray())
+            set.add(c);
+
+        return set;
     }
 
     private int getPriority(char item) {
@@ -62,10 +70,5 @@ public class Day3 implements Day {
         }
 
         throw new NoSuchElementException();
-    }
-
-    @Override
-    public int puzzle2(File file) throws FileNotFoundException {
-        return 0;
     }
 }
