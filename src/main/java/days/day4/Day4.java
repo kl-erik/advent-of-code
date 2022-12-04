@@ -15,18 +15,13 @@ public class Day4 implements Day {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             String[] pair = line.split(",");
-            String[] range1 = pair[0] .split("-");
-            String[] range2 = pair[1] .split("-");
-            int sectionStart1 = Integer.parseInt(range1[0]);
-            int sectionEnd1 = Integer.parseInt(range1[1]);
-            int sectionStart2 = Integer.parseInt(range2[0]);
-            int sectionEnd2 = Integer.parseInt(range2[1]);
+            Section section1 = getSection(pair[0]);
+            Section section2 = getSection(pair[1]);
 
-            if (sectionStart1 == sectionStart2 || sectionEnd1 == sectionEnd2 ||
-                    sectionStart1 < sectionStart2 && sectionEnd1 > sectionEnd2 ||
-                    sectionStart2 < sectionStart1 && sectionEnd2 > sectionEnd1) {
+            if (section1.start == section2.start || section1.end == section2.end ||
+                    section1.start < section2.start && section1.end > section2.end ||
+                    section2.start < section1.start && section2.end > section1.end)
                 fullOverlaps++;
-            }
         }
 
         return fullOverlaps;
@@ -40,19 +35,31 @@ public class Day4 implements Day {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             String[] pair = line.split(",");
-            String[] range1 = pair[0] .split("-");
-            String[] range2 = pair[1] .split("-");
-            int sectionStart1 = Integer.parseInt(range1[0]);
-            int sectionEnd1 = Integer.parseInt(range1[1]);
-            int sectionStart2 = Integer.parseInt(range2[0]);
-            int sectionEnd2 = Integer.parseInt(range2[1]);
+            Section section1 = getSection(pair[0]);
+            Section section2 = getSection(pair[1]);
 
-            if (sectionStart1 <= sectionStart2 && sectionEnd1 >= sectionStart2 ||
-            sectionStart2 <= sectionStart1 && sectionEnd2 >= sectionStart1) {
+            if (section1.start <= section2.start && section1.end >= section2.start ||
+            section2.start <= section1.start && section2.end >= section1.start)
                 fullOverlaps++;
-            }
         }
 
         return fullOverlaps;
+    }
+
+    private Section getSection(String range) {
+        String[] endpoints = range.split("-");
+        int start = Integer.parseInt(endpoints[0]);
+        int end = Integer.parseInt(endpoints[1]);
+        return new Section(start, end);
+    }
+
+    private static class Section {
+        private final int start;
+        private final int end;
+
+        public Section(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
     }
 }
