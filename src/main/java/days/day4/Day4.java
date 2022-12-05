@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Day4 implements Day {
     @Override
-    public int puzzle1(File file) throws FileNotFoundException {
+    public Object puzzle1(File file) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
         int fullOverlaps = 0;
 
@@ -28,7 +28,7 @@ public class Day4 implements Day {
     }
 
     @Override
-    public int puzzle2(File file) throws FileNotFoundException {
+    public Object puzzle2(File file) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
         int fullOverlaps = 0;
 

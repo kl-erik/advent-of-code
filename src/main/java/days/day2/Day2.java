@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Day2 implements Day {
-    public int puzzle1(File file) throws FileNotFoundException {
+    public Object puzzle1(File file) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
         int totalScore = 0;
 
@@ -23,7 +23,7 @@ public class Day2 implements Day {
     }
 
     @Override
-    public int puzzle2(File file) throws FileNotFoundException {
+    public Object puzzle2(File file) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
         int totalScore = 0;
 

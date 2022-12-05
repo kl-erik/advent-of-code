@@ -27,5 +27,4 @@ class Day4Test {
             throw new RuntimeException(e);
         }
     }
-
 }

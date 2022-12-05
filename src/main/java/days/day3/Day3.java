@@ -11,7 +11,7 @@ public class Day3 implements Day {
             'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
     @Override
-    public int puzzle1(File file) throws FileNotFoundException {
+    public Object puzzle1(File file) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
         int sum = 0;
 
@@ -29,7 +29,7 @@ public class Day3 implements Day {
     }
 
     @Override
-    public int puzzle2(File file) throws FileNotFoundException {
+    public Object puzzle2(File file) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
         int sum = 0;
 

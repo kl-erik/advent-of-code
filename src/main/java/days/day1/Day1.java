@@ -9,12 +9,12 @@ import java.util.PriorityQueue;
 import java.util.Scanner;
 
 public class Day1 implements Day {
-    public int puzzle1(File input) throws FileNotFoundException {
+    public Object puzzle1(File input) throws FileNotFoundException {
         PriorityQueue<Integer> maxes = getMaxes(input);
         return sum(1, maxes);
     }
 
-    public int puzzle2(File input) throws FileNotFoundException {
+    public Object puzzle2(File input) throws FileNotFoundException {
         PriorityQueue<Integer> maxes = getMaxes(input);
         return sum(3, maxes);
     }
