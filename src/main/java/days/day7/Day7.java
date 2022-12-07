@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 public class Day7 implements Day {
     private final ArrayList<Integer> sizes = new ArrayList<>();
+    private final int MAX_ALLOWED_DISK_SPACE = 40000000;
 
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
@@ -43,6 +44,19 @@ public class Day7 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        Scanner scanner = new Scanner(file);
+        solve(scanner);
+        int total = sizes.get(sizes.size() - 1);
+        int min = total;
+
+        for (int size : sizes) {
+            if (total - size <= MAX_ALLOWED_DISK_SPACE) {
+                if (size < min) {
+                    min = size;
+                }
+            }
+        }
+
+        return min;
     }
 }
