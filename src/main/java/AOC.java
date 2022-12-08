@@ -6,6 +6,7 @@ import days.day4.Day4;
 import days.day5.Day5;
 import days.day6.Day6;
 import days.day7.Day7;
+import days.day8.Day8;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,8 +14,8 @@ import java.io.FileNotFoundException;
 public class AOC {
     public static void main(String[] args) {
         try {
-            Day[] days = {new Day1(), new Day2(), new Day3(), new Day4(), new Day5(), new Day6(), new Day7()};
-            int day = 7;
+            Day[] days = {new Day1(), new Day2(), new Day3(), new Day4(), new Day5(), new Day6(), new Day7(), new Day8()};
+            int day = 8;
             System.out.println(days[day - 1].puzzle1(new File("src/main/resources/input_" + day + ".txt")));
             System.out.println(days[day - 1].puzzle2(new File("src/main/resources/input_" + day + ".txt")));
         } catch (FileNotFoundException e) {
