@@ -10,6 +10,15 @@ import java.util.Scanner;
 public class Day9 implements Day {
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
+        return solve(file, 2);
+    }
+
+    @Override
+    public Object puzzle2(File file) throws FileNotFoundException {
+        return solve(file, 10);
+    }
+
+    private static int solve(File file, int knots) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
         ArrayList<String> directions = new ArrayList<>();
         ArrayList<Integer> steps = new ArrayList<>();
@@ -24,9 +33,12 @@ public class Day9 implements Day {
         }
 
         boolean[][] board = new boolean[maxSize * 2][maxSize * 2];
-        Position head = new Position(maxSize, maxSize);
-        Position tail = new Position(maxSize, maxSize);
-        board[tail.x][tail.y] = true;
+        Position[] positions = new Position[knots];
+        for (int i = 0; i < positions.length; i++) {
+            positions[i] = new Position(maxSize, maxSize);
+        }
+
+        board[positions[positions.length - 1].x][positions[positions.length - 1].y] = true;
 
         for (int i = 0; i < directions.size(); i++) {
             String direction = directions.get(i);
@@ -34,16 +46,32 @@ public class Day9 implements Day {
 
             switch (direction) {
                 case "R":
-                    updateX(board, head, tail, step, true);
+                    for (int j = 0; j < step; j++) {
+                        positions[0].y++;
+                        update(positions);
+                        board[positions[positions.length - 1].x][positions[positions.length - 1].y] = true;
+                    }
                     break;
                 case "L":
-                    updateX(board, head, tail, step, false);
+                    for (int j = 0; j < step; j++) {
+                        positions[0].y--;
+                        update(positions);
+                        board[positions[positions.length - 1].x][positions[positions.length - 1].y] = true;
+                    }
                     break;
                 case "U":
-                    updateY(board, head, tail, step, true);
+                    for (int j = 0; j < step; j++) {
+                        positions[0].x++;
+                        update(positions);
+                        board[positions[positions.length - 1].x][positions[positions.length - 1].y] = true;
+                    }
                     break;
                 case "D":
-                    updateY(board, head, tail, step, false);
+                    for (int j = 0; j < step; j++) {
+                        positions[0].x--;
+                        update(positions);
+                        board[positions[positions.length - 1].x][positions[positions.length - 1].y] = true;
+                    }
                     break;
             }
         }
@@ -61,40 +89,24 @@ public class Day9 implements Day {
         return visited;
     }
 
-    private void updateY(boolean[][] board, Position head, Position tail, int step, boolean up) {
-        int stepDirection = up ? 1 : -1;
+    private static void update(Position[] positions) {
+        for (int k = 1; k < positions.length; k++) {
+            if (!positions[k].canReach(positions[k-1])) {
+                if (positions[k-1].y - positions[k].y > 0) {
+                    positions[k].y++;
+                } else if (positions[k-1].y - positions[k].y < 0) {
+                    positions[k].y--;
+                }
 
-        for (int i = 0; i < step; i++) {
-            Position previousHead = new Position(head.x, head.y);
-            head.y += stepDirection;
-
-            if (!tail.canReach(head)) {
-                tail.x = previousHead.x;
-                tail.y = previousHead.y;
-                board[tail.x][tail.y] = true;
+                if (positions[k-1].x - positions[k].x > 0) {
+                    positions[k].x++;
+                } else if (positions[k-1].x - positions[k].x < 0) {
+                    positions[k].x--;
+                }
+            } else {
+                break;
             }
         }
-    }
-
-    private static void updateX(boolean[][] board, Position head, Position tail, int step, boolean right) {
-        int stepDirection = right ? 1 : -1;
-
-        for (int i = 0; i < step; i++) {
-            Position previousHead = new Position(head.x, head.y);
-            head.x += stepDirection;
-
-            if (!tail.canReach(head)) {
-                tail.x = previousHead.x;
-                tail.y = previousHead.y;
-                board[tail.x][tail.y] = true;
-            }
-
-        }
-    }
-
-    @Override
-    public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
     }
 
     static class Position {
