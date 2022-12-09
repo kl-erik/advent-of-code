@@ -18,7 +18,7 @@ public class Day9 implements Day {
         return solve(file, 10);
     }
 
-    private static int solve(File file, int knots) throws FileNotFoundException {
+    private static int solve(File file, int nKnots) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
         ArrayList<String> directions = new ArrayList<>();
         ArrayList<Integer> steps = new ArrayList<>();
@@ -32,13 +32,15 @@ public class Day9 implements Day {
             maxSize += step;
         }
 
-        boolean[][] board = new boolean[maxSize * 2][maxSize * 2];
-        Position[] positions = new Position[knots];
-        for (int i = 0; i < positions.length; i++) {
-            positions[i] = new Position(maxSize, maxSize);
+        boolean[][] visitedPoints = new boolean[maxSize * 2][maxSize * 2];
+        Point[] knots = new Point[nKnots];
+        for (int i = 0; i < knots.length; i++) {
+            knots[i] = new Point(maxSize, maxSize);
         }
 
-        board[positions[positions.length - 1].x][positions[positions.length - 1].y] = true;
+        Point head = knots[0];
+        Point tail = knots[knots.length - 1];
+        visitedPoints[tail.x][tail.y] = true;
 
         for (int i = 0; i < directions.size(); i++) {
             String direction = directions.get(i);
@@ -47,49 +49,49 @@ public class Day9 implements Day {
             switch (direction) {
                 case "R":
                     for (int j = 0; j < step; j++) {
-                        positions[0].y++;
-                        update(positions);
-                        board[positions[positions.length - 1].x][positions[positions.length - 1].y] = true;
+                        head.y++;
+                        update(knots);
+                        visitedPoints[tail.x][tail.y] = true;
                     }
                     break;
                 case "L":
                     for (int j = 0; j < step; j++) {
-                        positions[0].y--;
-                        update(positions);
-                        board[positions[positions.length - 1].x][positions[positions.length - 1].y] = true;
+                        head.y--;
+                        update(knots);
+                        visitedPoints[tail.x][tail.y] = true;
                     }
                     break;
                 case "U":
                     for (int j = 0; j < step; j++) {
-                        positions[0].x++;
-                        update(positions);
-                        board[positions[positions.length - 1].x][positions[positions.length - 1].y] = true;
+                        head.x++;
+                        update(knots);
+                        visitedPoints[tail.x][tail.y] = true;
                     }
                     break;
                 case "D":
                     for (int j = 0; j < step; j++) {
-                        positions[0].x--;
-                        update(positions);
-                        board[positions[positions.length - 1].x][positions[positions.length - 1].y] = true;
+                        head.x--;
+                        update(knots);
+                        visitedPoints[tail.x][tail.y] = true;
                     }
                     break;
             }
         }
 
-        int visited = 0;
+        int totalVisited = 0;
 
-        for (boolean[] row : board) {
-            for (boolean col : row) {
-                if (col) {
-                    visited++;
+        for (boolean[] row : visitedPoints) {
+            for (boolean visitedPoint : row) {
+                if (visitedPoint) {
+                    totalVisited++;
                 }
             }
         }
 
-        return visited;
+        return totalVisited;
     }
 
-    private static void update(Position[] positions) {
+    private static void update(Point[] positions) {
         for (int k = 1; k < positions.length; k++) {
             if (!positions[k].canReach(positions[k-1])) {
                 if (positions[k-1].y - positions[k].y > 0) {
@@ -109,16 +111,16 @@ public class Day9 implements Day {
         }
     }
 
-    static class Position {
+    static class Point {
         int x;
         int y;
 
-        public Position(int x, int y) {
+        public Point(int x, int y) {
             this.x = x;
             this.y = y;
         }
 
-        public boolean canReach(Position position) {
+        public boolean canReach(Point position) {
             return (x == position.x || x - 1 == position.x || x + 1 == position.x)
                 && (y == position.y || y - 1 == position.y || y + 1 == position.y);
         }
