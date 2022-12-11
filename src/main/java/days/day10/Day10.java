@@ -4,6 +4,9 @@ import days.Day;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Day10 implements Day {
@@ -12,10 +15,51 @@ public class Day10 implements Day {
 
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
-        Scanner scanner = new Scanner(file);
-        return null;
+        ArrayList<String> instructions = parse2(file);
+        // List<String> instructions = Arrays.asList("noop", "addx 3", "noop", "addx -5", "noop");
+        int x = 1;
+        int v = 0;
+        int signalSum = 0;
+        int[] intervals = {0, 20, 60, 100, 140, 180, 220};
+
+        for (int i = 1; i < intervals.length; i++) {
+            int start = intervals[i - 1];
+            int end = intervals[i];
+
+            for (int cycle = start; cycle < end; cycle++) {
+                String instruction = instructions.get(cycle);
+
+                if (!instruction.equals("noop")) {
+                    v = Integer.parseInt(instruction.split(" ")[1]);
+                    continue;
+                }
+
+                x += v;
+                v = 0;
+            }
+
+            signalSum = x * end;
+        }
+
+        return signalSum;
         // int sumSignals = getInteger(scanner, 0, 20, 20);
         // return sumSignals + getInteger(scanner, 20, 40, 220);
+    }
+
+    private ArrayList<String> parse2(File file) throws FileNotFoundException {
+        Scanner scanner = new Scanner(file);
+        ArrayList<String> instructions = new ArrayList<>();
+
+        while (scanner.hasNextLine()) {
+            String instruction = scanner.nextLine();
+            instructions.add(instruction);
+
+            if (!instruction.equals("noop")) {
+                instructions.add("noop");
+            }
+        }
+
+        return instructions;
     }
 
     /*private static int getInteger(Scanner scanner, int offset, int mod, int maxIteration) {
