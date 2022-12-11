@@ -32,6 +32,34 @@ public class Day11 implements Day {
         return calcMonkeyBusiness(inspections);
     }
 
+    @Override
+    public Object puzzle2(File file) throws FileNotFoundException {
+        Monkey[] monkeys = parse(file);
+        int[] inspections = new int[monkeys.length];
+        int gcd = 1;
+
+        for (Monkey monkey : monkeys) {
+            gcd *= monkey.divisor;
+        }
+
+        for (int round = 1; round <= 10000; round++) {
+            for (int i = 0; i < monkeys.length; i++) {
+                Monkey monkey = monkeys[i];
+
+                while (!monkey.items.isEmpty()) {
+                    long item = monkey.items.remove();
+                    item = monkey.inspect(item);
+                    inspections[i]++;
+                    item = item % gcd;
+                    int toMonkey = monkey.test(item);
+                    monkeys[toMonkey].items.add(item);
+                }
+            }
+        }
+
+        return calcMonkeyBusiness(inspections);
+    }
+
     private static Monkey[] parse(File file) throws FileNotFoundException {
         ArrayList<Monkey> monkeyList = new ArrayList<>();
         Scanner scanner = new Scanner(file);
@@ -73,10 +101,10 @@ public class Day11 implements Day {
         return toArray(monkeyList);
     }
 
-    private static Monkey getMonkey(LinkedList<Long> items, String[] operation, int test, int trueMonkey, int falseMonkey) {
+    private static Monkey getMonkey(LinkedList<Long> items, String[] operation, int divisor, int trueMonkey, int falseMonkey) {
         if (operation[1].equals("old")) {
             if (operation[0].equals("+")) {
-                return new Monkey(items) {
+                return new Monkey(items, divisor) {
                     @Override
                     public long inspect(long item) {
                         return item + item;
@@ -84,11 +112,11 @@ public class Day11 implements Day {
 
                     @Override
                     public int test(long item) {
-                        return item % test == 0 ? trueMonkey : falseMonkey;
+                        return item % divisor == 0 ? trueMonkey : falseMonkey;
                     }
                 };
             } else {
-                return new Monkey(items) {
+                return new Monkey(items, divisor) {
                     @Override
                     public long inspect(long item) {
                         return item * item;
@@ -96,7 +124,7 @@ public class Day11 implements Day {
 
                     @Override
                     public int test(long item) {
-                        return item % test == 0 ? trueMonkey : falseMonkey;
+                        return item % divisor == 0 ? trueMonkey : falseMonkey;
                     }
                 };
             }
@@ -104,7 +132,7 @@ public class Day11 implements Day {
             int increase = Integer.parseInt(operation[1]);
 
             if (operation[0].equals("+")) {
-                return new Monkey(items) {
+                return new Monkey(items, divisor) {
                     @Override
                     public long inspect(long item) {
                         return item + increase;
@@ -112,11 +140,11 @@ public class Day11 implements Day {
 
                     @Override
                     public int test(long item) {
-                        return item % test == 0 ? trueMonkey : falseMonkey;
+                        return item % divisor == 0 ? trueMonkey : falseMonkey;
                     }
                 };
             } else {
-                return new Monkey(items) {
+                return new Monkey(items, divisor) {
                     @Override
                     public long inspect(long item) {
                         return item * increase;
@@ -124,7 +152,7 @@ public class Day11 implements Day {
 
                     @Override
                     public int test(long item) {
-                        return item % test == 0 ? trueMonkey : falseMonkey;
+                        return item % divisor == 0 ? trueMonkey : falseMonkey;
                     }
                 };
             }
@@ -141,7 +169,7 @@ public class Day11 implements Day {
         return monkeys;
     }
 
-    private static int calcMonkeyBusiness(int[] inspections) {
+    private static long calcMonkeyBusiness(int[] inspections) {
         int mostInspections1 = 0;
         int mostInspections2 = 0;
 
@@ -157,19 +185,16 @@ public class Day11 implements Day {
             }
         }
 
-        return mostInspections1 * mostInspections2;
-    }
-
-    @Override
-    public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        return (long) mostInspections1 * mostInspections2;
     }
 
     abstract static class Monkey implements KeepAwayPlayable {
         LinkedList<Long> items;
+        int divisor;
 
-        public Monkey(LinkedList<Long> items) {
+        public Monkey(LinkedList<Long> items, int divisor) {
             this.items = items;
+            this.divisor = divisor;
         }
     }
 
