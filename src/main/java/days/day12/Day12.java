@@ -9,7 +9,17 @@ import java.util.*;
 public class Day12 implements Day {
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
-        Node start = parse(file);
+        ArrayList<Node> startingNodes = parse(file);
+        for (Node node : startingNodes) {
+            if (node.value == 'S') {
+                return bfs(node);
+            }
+        }
+
+        throw new NoSuchElementException("S");
+    }
+
+    private static int bfs(Node start) {
         Set<Node> visited = new HashSet<>();
         Set<Node> toVisit = new HashSet<>();
         toVisit.add(start);
@@ -31,7 +41,33 @@ public class Day12 implements Day {
         }
     }
 
-    private Node parse(File file) throws FileNotFoundException {
+    private int bfs(Node start, int limit) {
+        Set<Node> visited = new HashSet<>();
+        Set<Node> toVisit = new HashSet<>();
+        toVisit.add(start);
+        int steps = 0;
+
+        while (true) {
+            Set<Node> visitNext = new HashSet<>();
+
+            for (Node node : toVisit) {
+                if (node.value == 'E')
+                    return steps;
+                visited.add(node);
+                visitNext.addAll(node.neighbours);
+            }
+
+            visitNext.removeAll(visited);
+            toVisit = visitNext;
+            steps++;
+
+            if (steps > limit) {
+                return steps;
+            }
+        }
+    }
+
+    private ArrayList<Node> parse(File file) throws FileNotFoundException {
         ArrayList<ArrayList<Character>> mapList = new ArrayList<>();
         Scanner scanner = new Scanner(file);
 
@@ -55,15 +91,15 @@ public class Day12 implements Day {
         heights.put('E', 25);
 
         Node[][] map = new Node[mapList.size()][mapList.get(0).size()];
-        Node start = null;
+        ArrayList<Node> startingNodes = new ArrayList<>();
 
         for (int row = 0; row < mapList.size(); row++) {
             for (int col = 0; col < mapList.get(row).size(); col++) {
                 char letter = mapList.get(row).get(col);
                 Node node = new Node(letter, heights.get(letter));
                 map[row][col] = node;
-                if (letter == 'S')
-                    start = node;
+                if (letter == 'S' || letter == 'a')
+                    startingNodes.add(node);
             }
         }
 
@@ -98,12 +134,22 @@ public class Day12 implements Day {
             }
         }
 
-        return start;
+        return startingNodes;
     }
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        ArrayList<Node> startingNodes = parse(file);
+        int[] steps = new int[startingNodes.size()];
+        steps[0] = bfs(startingNodes.get(0));
+        int min = steps[0];
+
+        for (int i = 1; i < startingNodes.size(); i++) {
+            steps[i] = bfs(startingNodes.get(i), min);
+            if (steps[i] < min) min = steps[i];
+        }
+
+        return min;
     }
 
     private static class Node {
