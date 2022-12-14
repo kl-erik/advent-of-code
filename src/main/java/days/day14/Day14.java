@@ -5,6 +5,8 @@ import days.Day;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Day14 implements Day {
@@ -13,30 +15,23 @@ public class Day14 implements Day {
         boolean[][] cave = parse(file);
 
         int i = 0;
-        while (produceSand(cave, cave[0].length / 2, 0)) {
+        while (!produceSand1(cave, cave[0].length / 2, 0)) {
             i++;
         }
 
         return i;
     }
 
-    private boolean produceSand(boolean[][] cave, int x, int y) {
-        while (!cave[y][x]) {
-            y++;
+    @Override
+    public Object puzzle2(File file) throws FileNotFoundException {
+        boolean[][] cave = parse(file);
 
-            if (y == cave.length) {
-                return false;
-            }
+        int i = 0;
+        while (!produceSand2(cave, cave[0].length / 2, 0)) {
+            i++;
         }
 
-        if (!cave[y][x-1]) {
-            return produceSand(cave, x-1, y);
-        } else if (!cave[y][x+1]) {
-            return produceSand(cave, x+1, y);
-        } else {
-            cave[y - 1][x] = true;
-            return true;
-        }
+        return ++i;
     }
 
     private boolean[][] parse(File file) throws FileNotFoundException {
@@ -46,7 +41,11 @@ public class Day14 implements Day {
         while (scanner.hasNextLine()) {
             String[] strings = scanner.nextLine().split(" -> ");
             for (int i = 1; i < strings.length; i++) {
-                ArrayList<Point> path = getPath(strings[i-1].split(","), strings[i].split(","));
+                String[] pointString1 = strings[i-1].split(",");
+                String[] pointString2 = strings[i].split(",");
+                Point point1 = new Point(Integer.parseInt(pointString1[0]), Integer.parseInt(pointString1[1]));
+                Point point2 = new Point(Integer.parseInt(pointString2[0]), Integer.parseInt(pointString2[1]));
+                ArrayList<Point> path = getPath(point1, point2);
                 paths.add(path);
             }
         }
@@ -54,92 +53,100 @@ public class Day14 implements Day {
         return getCave(paths);
     }
 
-    private boolean[][] getCave(ArrayList<ArrayList<Point>> paths) {
-        int maxX = paths.get(0).get(0).x;
-        int maxY = paths.get(0).get(0).y;
-        int minX = maxX;
-        int minY = maxY;
+    private ArrayList<Point> getPath(Point point1, Point point2) {
+        if (point1.x < point2.x)
+            return getHorizontalPath(point1, point2);
+        if (point1.x > point2.x)
+            return getHorizontalPath(point2, point1);
+        if (point1.y < point2.y)
+            return getVerticalPath(point1, point2);
+        if (point1.y > point2.y)
+            return getVerticalPath(point2, point1);
+        return new ArrayList<>(Collections.singleton(point1));
+    }
 
-        for (ArrayList<Point> path : paths) {
-            for (Point point : path) {
-                if (point.x > maxX) {
-                    maxX = point.x;
-                } else if (point.x < minX) {
-                    minX = point.x;
+    private ArrayList<Point> getHorizontalPath(Point from, Point to) {
+        ArrayList<Point> path = new ArrayList<>();
+        for (int i = from.x; i <= to.x; i++)
+            path.add(new Point(i, from.y));
+        return path;
+    }
+
+    private ArrayList<Point> getVerticalPath(Point from, Point to) {
+        ArrayList<Point> path = new ArrayList<>();
+        for (int i = from.y; i <= to.y; i++)
+            path.add(new Point(from.x, i));
+        return path;
+    }
+
+    private boolean[][] getCave(ArrayList<ArrayList<Point>> paths) {
+        int xOffset = Math.abs(500 - paths.get(0).get(0).x);
+        int maxY = paths.get(0).get(0).y;
+
+        for (int i = 1; i < paths.size(); i++) {
+            for (Point point : paths.get(i)) {
+                int offset = Math.abs(500 - point.x);
+
+                if (offset > xOffset) {
+                    xOffset = offset;
                 }
 
                 if (point.y > maxY) {
                     maxY = point.y;
-                } else if (point.y < minY) {
-                    minY = point.y;
                 }
             }
         }
 
-        int xOffset = Math.max(Math.abs(maxX - 500), Math.abs(500 - minX)) + 1;
-
-        boolean[][] cave = new boolean[maxY + 1][xOffset * 2];
+        boolean[][] cave = new boolean[maxY + 3][xOffset * 6];
 
         for (ArrayList<Point> path : paths) {
             for (Point point : path) {
-                cave[point.y][point.x - 500 + xOffset] = true;
+                cave[point.y][point.x - 500 + xOffset * 3] = true;
             }
         }
+
+        Arrays.fill(cave[cave.length - 1], true);
 
         return cave;
     }
 
-    private ArrayList<Point> getPath(String[] start, String[] dest) {
-        int x1 = Integer.parseInt(start[0]);
-        int y1 = Integer.parseInt(start[1]);
-        int x2 = Integer.parseInt(dest[0]);
-        int y2 = Integer.parseInt(dest[1]);
-
-        if (y1 < y2) {
-            return getVerticalPath(y1, y2, x1);
+    private boolean produceSand1(boolean[][] cave, int x, int y) {
+        while (!cave[y][x]) {
+            y++;
         }
 
-        if (y1 > y2) {
-            return getVerticalPath(y2, y1, x1);
+        if (!cave[y][x-1]) {
+            return produceSand1(cave, x-1, y);
+        } else if (!cave[y][x+1]) {
+            return produceSand1(cave, x+1, y);
+        } else {
+            cave[y - 1][x] = true;
+            return y > cave.length - 3;
         }
-
-        if (x1 < x2) {
-            return getHorizontalPath(x1, x2, y1);
-        }
-
-        if (x1 > x2) {
-            return getHorizontalPath(x2, x1, y1);
-        }
-
-        return new ArrayList<>();
     }
 
-    private ArrayList<Point> getHorizontalPath(int x1, int x2, int y) {
-        ArrayList<Point> path = new ArrayList<>();
-        for (int i = x1; i <= x2; i++)
-            path.add(new Point(y, i));
-        return path;
-    }
+    private boolean produceSand2(boolean[][] cave, int x, int y) {
+        while (!cave[y][x]) {
+            y++;
+        }
 
-    private ArrayList<Point> getVerticalPath(int y1, int y2, int x) {
-        ArrayList<Point> path = new ArrayList<>();
-        for (int i = y1; i <= y2; i++)
-            path.add(new Point(i, x));
-        return path;
-    }
-
-    @Override
-    public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        if (!cave[y][x-1]) {
+            return produceSand2(cave, x-1, y);
+        } else if (!cave[y][x+1]) {
+            return produceSand2(cave, x+1, y);
+        } else {
+            cave[y - 1][x] = true;
+            return y - 1 == 0 && x == cave[0].length / 2;
+        }
     }
 
     private static class Point {
-        int y;
         int x;
+        int y;
 
-        public Point(int y, int x) {
-            this.y = y;
+        public Point(int x, int y) {
             this.x = x;
+            this.y = y;
         }
     }
 }
