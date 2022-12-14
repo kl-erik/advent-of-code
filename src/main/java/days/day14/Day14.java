@@ -15,7 +15,7 @@ public class Day14 implements Day {
         boolean[][] cave = parse(file);
 
         int i = 0;
-        while (!produceSand1(cave, cave[0].length / 2, 0)) {
+        while (!addSand(cave, cave[0].length / 2, 0)) {
             i++;
         }
 
@@ -27,11 +27,12 @@ public class Day14 implements Day {
         boolean[][] cave = parse(file);
 
         int i = 0;
-        while (!produceSand2(cave, cave[0].length / 2, 0)) {
+        while (!cave[0][cave[0].length / 2]) {
+            addSand(cave, cave[0].length / 2, 0);
             i++;
         }
 
-        return ++i;
+        return i;
     }
 
     private boolean[][] parse(File file) throws FileNotFoundException {
@@ -110,33 +111,18 @@ public class Day14 implements Day {
         return cave;
     }
 
-    private boolean produceSand1(boolean[][] cave, int x, int y) {
-        while (!cave[y][x]) {
+    private boolean addSand(boolean[][] cave, int x, int y) {
+        while (!cave[y + 1][x]) {
             y++;
         }
 
-        if (!cave[y][x-1]) {
-            return produceSand1(cave, x-1, y);
-        } else if (!cave[y][x+1]) {
-            return produceSand1(cave, x+1, y);
+        if (!cave[y + 1][x-1]) {
+            return addSand(cave, x-1, y + 1);
+        } else if (!cave[y + 1][x+1]) {
+            return addSand(cave, x+1, y + 1);
         } else {
-            cave[y - 1][x] = true;
+            cave[y][x] = true;
             return y > cave.length - 3;
-        }
-    }
-
-    private boolean produceSand2(boolean[][] cave, int x, int y) {
-        while (!cave[y][x]) {
-            y++;
-        }
-
-        if (!cave[y][x-1]) {
-            return produceSand2(cave, x-1, y);
-        } else if (!cave[y][x+1]) {
-            return produceSand2(cave, x+1, y);
-        } else {
-            cave[y - 1][x] = true;
-            return y - 1 == 0 && x == cave[0].length / 2;
         }
     }
 
