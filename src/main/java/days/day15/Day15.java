@@ -109,6 +109,7 @@ public class Day15 implements Day {
                     distance = distance - Math.abs(sensor.y - row);
                     int[] interval = {Math.max(sensor.x - distance,0), Math.min(sensor.x + distance, rows)};
                     intervals.add(interval);
+                    // TODO intervals.insert method which reorganizes the intervals
                 }
             }
 
