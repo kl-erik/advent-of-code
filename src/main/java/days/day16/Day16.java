@@ -17,6 +17,16 @@ public class Day16 implements Day {
         int[] sums = new int[caves.size()];
         int i = 0;
 
+        HashMap<String, Cave> skip = new HashMap<>();
+        for (String name : caves.keySet()) {
+            Cave cave = caves.get(name);
+            if (!cave.name.equals("AA") && cave.flowRate == 0) {
+                skip.put(name, cave);
+            }
+        }
+
+        caves.keySet().removeAll(skip.keySet());
+
         for (Cave cave : caves.values()) {
             int distance = distances.get(start).get(cave);
             sums[i] = bfs(cave, new HashSet<>(caves.values()), distance, 30);
@@ -36,23 +46,29 @@ public class Day16 implements Day {
         HashMap<String, Cave> caves = parse(file);
         distances = getDistances(new HashSet<>(caves.values()));
         Cave start = caves.get("AA");
-        ArrayList<Cave> caveList = new ArrayList<>(caves.values());
         int maxSum = 0;
+
+        HashMap<String, Cave> skip = new HashMap<>();
+        for (String name : caves.keySet()) {
+            Cave cave = caves.get(name);
+            if (!cave.name.equals("AA") && cave.flowRate == 0) {
+                skip.put(name, cave);
+            }
+        }
+
+        caves.keySet().removeAll(skip.keySet());
+        ArrayList<Cave> caveList = new ArrayList<>(caves.values());
 
         for (int i = 0; i < caveList.size(); i++) {
             Cave cave1 = caveList.get(i);
 
-            if (cave1.flowRate != 0) {
-                for (int j = i; j < caveList.size(); j++) {
-                    Cave cave2 = caveList.get(j);
+            for (int j = i; j < caveList.size(); j++) {
+                Cave cave2 = caveList.get(j);
 
-                    if (cave2.flowRate != 0) {
-                        if (cave1 != cave2) {
-                            int sum = bfs(cave1, cave2, new HashSet<>(caves.values()), distances.get(start).get(cave1), distances.get(start).get(cave2));
-                            if (sum > maxSum) {
-                                maxSum = sum;
-                            }
-                        }
+                if (cave1 != cave2) {
+                    int sum = bfs(cave1, cave2, new HashSet<>(caves.values()), distances.get(start).get(cave1), distances.get(start).get(cave2));
+                    if (sum > maxSum) {
+                        maxSum = sum;
                     }
                 }
             }
@@ -68,36 +84,38 @@ public class Day16 implements Day {
         toVisit.remove(start2);
         i++;
         j++;
+        int maxDistance1 = 0;
+        int maxDistance2 = 0;
+        int maxFlow1 = 0;
+        int maxFlow2 = 0;
 
         int maxSum = 0;
         for (Cave next1 : toVisit) {
-            if (next1.flowRate != 0 && i + distances.get(start1).get(next1) < 26) {
-                for (Cave next2 : toVisit) {
-                    if (next2.flowRate != 0 && j + distances.get(start2).get(next2) < 26) {
-                        if (next1 != next2) {
-                            int sum = bfs(next1, next2, new HashSet<>(toVisit), i + distances.get(start1).get(next1), j + distances.get(start2).get(next2));
+            int distance1 = i + distances.get(start1).get(next1);
+            if (next1.flowRate < maxFlow1 && distance1 > maxDistance1) continue;
 
-                            if (sum > maxSum) {
-                                maxSum = sum;
-                            }
-                        }
-                    } else if (distances.get(start2).get(next2) > 26) {
-                        int sum = bfs(next1, new HashSet<>(toVisit), i + distances.get(start1).get(next1), 26);
+            for (Cave next2 : toVisit) {
+                if (next1 != next2) {
+                    int distance2 = j + distances.get(start2).get(next2);
+                    if (next2.flowRate < maxFlow2 && distance2 > maxDistance2) continue;
+                    int sum = 0;
 
-                        if (sum > maxSum) {
-                            maxSum = sum;
-                        }
+                    if (distance1 <= 26 && distance2 <= 26) {
+                        sum = bfs(next1, next2, new HashSet<>(toVisit), distance1, distance2);
+                    } else if (distance1 <= 26) {
+                        sum = bfs(next1, new HashSet<>(toVisit), distance1, 26);
+                    } else if (distance2 <= 26) {
+                        sum = bfs(next2, new HashSet<>(toVisit), distance2, 26);
                     }
-                }
-            } else if (i + distances.get(start1).get(next1) > 26) {
-                for (Cave next2 : toVisit) {
-                    if (next2.flowRate != 0 && j + distances.get(start2).get(next2) < 26) {
-                        int sum = bfs(next2, new HashSet<>(toVisit), j + distances.get(start2).get(next2), 26);
 
-                        if (sum > maxSum) {
-                            maxSum = sum;
-                        }
+                    if (sum > maxSum) {
+                        maxSum = sum;
                     }
+
+                    maxDistance1 = distance1;
+                    maxDistance2 = distance2;
+                    maxFlow1 = next1.flowRate;
+                    maxFlow2 = next2.flowRate;
                 }
             }
         }
@@ -110,18 +128,22 @@ public class Day16 implements Day {
 
         toVisit.remove(start);
         i++;
-
         int maxSum = 0;
-        for (Cave next : toVisit) {
-            int distance = distances.get(start).get(next);
+        int maxDistance = 0;
+        int maxFlow = 0;
 
-            if (i + distance < limit && next.flowRate != 0) {
-                int sum = bfs(next, new HashSet<>(toVisit), i + distance, limit);
+        for (Cave next : toVisit) {
+            int distance = i + distances.get(start).get(next);
+
+            if (next.flowRate < maxFlow && distance > maxDistance) continue;
+
+            if (distance < limit) {
+                int sum = bfs(next, new HashSet<>(toVisit), distance, limit);
+
                 if (sum > maxSum) {
                     maxSum = sum;
                 }
             }
-
         }
 
         return maxSum + start.flowRate * (limit - i);
