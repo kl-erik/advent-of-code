@@ -183,7 +183,7 @@ public class Day17 implements Day {
         return -1;
     }
 
-    class Rock {
+    static class Rock {
         int x;
         int y;
         final boolean[][] shape;
