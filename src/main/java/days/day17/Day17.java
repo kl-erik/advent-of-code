@@ -16,9 +16,13 @@ public class Day17 implements Day {
         SQUARE
     }
 
-
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
+        ArrayList<Integer> heights = getHeights(file, 2022);
+        return heights.get(heights.size() - 1);
+    }
+
+    private ArrayList<Integer> getHeights(File file, int stones) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
         char[] gas = scanner.nextLine().toCharArray();
         Shape[] shapes = Shape.values();
@@ -30,9 +34,10 @@ public class Day17 implements Day {
         ArrayList<boolean[]> testChamber;
         Rock rock;
         boolean stopped;
+        ArrayList<Integer> maxHeights = new ArrayList<>();
 
-        for (int i = 0; i <= 2021; i++) {
-            initChamber(chamber, maxHeight);
+        for (int i = 0; i < stones; i++) {
+            pad(chamber, maxHeight);
             latestChamber = clone(chamber);
             rock = new Rock(2, chamber.size() - maxHeight - 3, shapes[shapeIndex]);
             stopped = false;
@@ -43,8 +48,6 @@ public class Day17 implements Day {
                     latestChamber = testChamber;
                 }
 
-                // print(latestChamber, '#');
-
                 testChamber = tryLower(rock, chamber);
                 if (testChamber.isEmpty()) {
                     chamber = latestChamber;
@@ -52,8 +55,6 @@ public class Day17 implements Day {
                 } else {
                     latestChamber = testChamber;
                 }
-
-                // print(latestChamber, '#');
 
                 gasIndex++;
                 gasIndex %= gas.length;
@@ -66,14 +67,14 @@ public class Day17 implements Day {
             if (height > maxHeight) {
                 maxHeight = height;
             }
+
+            maxHeights.add(maxHeight);
         }
 
-        // print(chamber, '@');
-
-        return maxHeight;
+        return maxHeights;
     }
 
-    private void initChamber(ArrayList<boolean[]> chamber, int height) {
+    private void pad(ArrayList<boolean[]> chamber, int height) {
         while (chamber.size() < 7 + height) {
             chamber.add(0, new boolean[7]);
         }
@@ -138,22 +139,48 @@ public class Day17 implements Day {
         return clone;
     }
 
-    private static void print(ArrayList<boolean[]> chamber, char c) {
-        for (boolean[] row : chamber) {
-            for (boolean b : row) {
-                if (b) System.out.print(c);
-                else System.out.print(".");
-            }
-
-            System.out.println();
-        }
-
-        System.out.println();
-    }
-
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        ArrayList<Integer> heights = getHeights(file, 10000);
+        int period = findCycle(heights);
+        heights = getHeights(file, period * 2);
+        int init = heights.get(period - 1); // height of the first iteration of period
+        int cycle = heights.get(period * 2 - 1) - init; // height difference of subsequent iterations of period
+        long rocks = 1000000000000L;
+        int rest = (int) (rocks % period);
+        rocks -= period + rest;
+        heights = getHeights(file, period + rest);
+        int end = heights.get(heights.size() - 1) - init;
+        return rocks / period * cycle + init + end;
+    }
+
+    /*
+     * Find x such that for every x stones, the height difference is the same at least 4 times in a row.
+     * First iteration starts flat which might be wrong so skip it by setting i = x and j = x*2 instead of i=0 and j=x
+     */
+    private int findCycle(ArrayList<Integer> maxHeights) {
+        int period = 1;
+
+        while (period < maxHeights.size() / 2) {
+            int i = period;
+            int j = period * 2;
+            int heightDifference = maxHeights.get(j) - maxHeights.get(i);
+            int streak = 0;
+
+            while (j < maxHeights.size() && maxHeights.get(j) - maxHeights.get(i) == heightDifference) {
+                streak++;
+                i = j;
+                j += period;
+            }
+
+            if (streak >= 4) {
+                return period;
+            }
+
+            period++;
+        }
+
+        return -1;
     }
 
     class Rock {
