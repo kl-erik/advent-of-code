@@ -11,6 +11,21 @@ public class Day18 implements Day {
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
         int[][] cubes = parse(file);
+        boolean[][][] matrix = getMatrix(cubes);
+        return getArea(matrix);
+    }
+
+    @Override
+    public Object puzzle2(File file) throws FileNotFoundException {
+        int[][] cubes = parse(file);
+        boolean[][][] matrix = getMatrix(cubes);
+        int area = getArea(matrix);
+        inverse(matrix);
+        removeEdges(matrix);
+        return area - getArea(matrix);
+    }
+
+    private static boolean[][][] getMatrix(int[][] cubes) {
         int maxX = -1;
         int maxY = -1;
         int maxZ = -1;
@@ -21,38 +36,91 @@ public class Day18 implements Day {
             maxZ = Math.max(maxZ, cube[2]);
         }
 
-        boolean[][][] droplet = new boolean[maxX + 1][maxY + 1][maxZ + 1];
-        int area = 0;
+        boolean[][][] matrix = new boolean[maxX + 1][maxY + 1][maxZ + 1];
         for (int[] cube : cubes)
-            area += 6 - covered(cube, droplet);
+            matrix[cube[0]][cube[1]][cube[2]] = true;
+        return matrix;
+    }
+
+    private int getArea(boolean[][][] matrix) {
+        int area = 0;
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                for (int k = 0; k < matrix[i][j].length; k++) {
+                    if (matrix[i][j][k]) {
+                        if (i == matrix.length - 1 || !matrix[i + 1][j][k])
+                            area++;
+                        if (i == 0 || !matrix[i - 1][j][k])
+                            area++;
+                        if (j == matrix[i].length - 1 || !matrix[i][j + 1][k])
+                            area++;
+                        if (j == 0 || !matrix[i][j - 1][k])
+                            area++;
+                        if (k == matrix[i][j].length - 1 || !matrix[i][j][k + 1])
+                            area++;
+                        if (k == 0 || !matrix[i][j][k - 1])
+                            area++;
+                    }
+                }
+            }
+        }
+
         return area;
     }
 
-    private int covered(int[] cube, boolean[][][] droplet) {
-        int covered = 0;
-        int x = cube[0];
-        int y = cube[1];
-        int z = cube[2];
-        droplet[x][y][z] = true;
-        if (x + 1 < droplet.length)
-            if (droplet[x + 1][y][z])
-                covered++;
-        if (x - 1 >= 0)
-            if (droplet[x - 1][y][z])
-                covered++;
-        if (y + 1 < droplet[x].length)
-            if (droplet[x][y + 1][z])
-                covered++;
-        if (y - 1 >= 0)
-            if (droplet[x][y - 1][z])
-                covered++;
-        if (z + 1 < droplet[x][y].length)
-            if (droplet[x][y][z + 1])
-                covered++;
-        if (z - 1 >= 0)
-            if (droplet[x][y][z - 1])
-                covered++;
-        return covered * 2;
+    private void inverse(boolean[][][] droplet) {
+        for (int i = 0; i < droplet.length; i++)
+            for (int j = 0; j < droplet[i].length; j++)
+                for (int k = 0; k < droplet[i][j].length; k++)
+                    droplet[i][j][k] = !droplet[i][j][k];
+    }
+
+    private void removeEdges(boolean[][][] inverse) {
+        for (int i = 0; i < inverse.length; i++) {
+            for (int j = 0; j < inverse[i].length; j++) {
+                if (inverse[i][j][0])
+                    removeEdges(inverse, i, j, 0);
+                if (inverse[i][j][inverse[i][j].length - 1])
+                    removeEdges(inverse, i, j, inverse[i][j].length - 1);
+            }
+        }
+
+        for (int i = 0; i < inverse.length; i++) {
+            for (int k = 0; k < inverse[i][0].length; k++) {
+                if (inverse[i][0][k])
+                    removeEdges(inverse, i, 0, k);
+                if (inverse[i][inverse[i].length - 1][k])
+                    removeEdges(inverse, i, inverse[i].length - 1, k);
+            }
+        }
+
+        for (int j = 0; j < inverse[0].length; j++) {
+            for (int k = 0; k < inverse[0][j].length; k++) {
+                if (inverse[0][j][k])
+                    removeEdges(inverse, 0, j, k);
+                if (inverse[inverse.length - 1][j][k])
+                    removeEdges(inverse, inverse.length - 1, j, k);
+            }
+        }
+    }
+
+    private void removeEdges(boolean[][][] inverse, int i, int j, int k) {
+        if (inverse[i][j][k]) {
+            inverse[i][j][k] = false;
+            if (i > 0)
+                removeEdges(inverse, i - 1, j, k);
+            if (i < inverse.length - 1)
+                removeEdges(inverse, i + 1, j, k);
+            if (j > 0)
+                removeEdges(inverse, i, j - 1, k);
+            if (j < inverse[i].length - 1)
+                removeEdges(inverse, i, j + 1, k);
+            if (k > 0)
+                removeEdges(inverse, i, j, k - 1);
+            if (k < inverse[i][j].length - 1)
+                removeEdges(inverse, i, j, k + 1);
+        }
     }
 
     private int[][] parse(File file) {
@@ -78,10 +146,5 @@ public class Day18 implements Day {
         for (int i = 0; i < list.size(); i++)
             array[i] = list.get(i);
         return array;
-    }
-
-    @Override
-    public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
     }
 }
