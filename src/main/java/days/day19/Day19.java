@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static java.lang.Math.max;
+
 public class Day19 implements Day {
     private int oreRobotOreCost;
     private int clayRobotOreCost;
@@ -82,10 +84,10 @@ public class Day19 implements Day {
         }
 
        if (ore >= geodeRobotOreCost && obsidian >= geodeRobotObsidianCost) {
-            solutions[3] = getMaxGeodes(ore - geodeRobotOreCost, clay, obsidian - geodeRobotObsidianCost, geode - 1,
-                    oreRobots, clayRobots, obsidianRobots, geodeRobots + 1, minutes + 1, new ArrayList<>());
+           solutions[3] = getMaxGeodes(ore - geodeRobotOreCost, clay, obsidian - geodeRobotObsidianCost, geode - 1,
+                   oreRobots, clayRobots, obsidianRobots, geodeRobots + 1, minutes + 1, new ArrayList<>());
         } else {
-            solutions[4] = getMaxGeodes(ore, clay, obsidian, geode,
+           solutions[4] = getMaxGeodes(ore, clay, obsidian, geode,
                     oreRobots, clayRobots, obsidianRobots, geodeRobots, minutes + 1, skip);
         }
 
@@ -108,7 +110,7 @@ public class Day19 implements Day {
         split2 = split[4].split("costs | ore and | obsidian");
         geodeRobotOreCost = Integer.parseInt(split2[1]);
         geodeRobotObsidianCost = Integer.parseInt(split2[2]);
-        maxOreRobots = oreRobotOreCost + clayRobotOreCost + obsidianRobotOreCost + geodeRobotOreCost;
+        maxOreRobots = max(oreRobotOreCost, max(clayRobotOreCost, max(obsidianRobotOreCost, geodeRobotOreCost)));
         maxClayRobots = obsidianRobotClayCost;
         maxObsidianRobots = geodeRobotObsidianCost;
     }
