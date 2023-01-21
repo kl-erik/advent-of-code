@@ -19,27 +19,40 @@ public class Day20 implements Day {
             move(numbers, i);
         }
 
-        i = findZeroIndex(numbers);
-        int v1 = numbers[(i + 1000) % numbers.length].v;
-        int v2 = numbers[(i + 2000) % numbers.length].v;
-        int v3 = numbers[(i + 3000) % numbers.length].v;
+        return getGroveSum(numbers);
+    }
 
-        return v1 + v2 + v3;
+    @Override
+    public Object puzzle2(File file) throws FileNotFoundException {
+        Number[] numbers = parse(file);
+        for (Number number : numbers) {
+            number.v *= 811589153;
+        }
+
+        int i;
+
+        for (int k = 0; k < 10; k++) {
+            for (int j = 0; j < numbers.length; j++) {
+                i = findValueIndex(numbers, j);
+                move(numbers, i);
+            }
+        }
+
+        return getGroveSum(numbers);
     }
 
     private void move(Number[] numbers, int i) {
         if (numbers[i].v == 0)
             return;
 
-        int j = numbers[i].v + i;
+        long j = numbers[i].v + i;
 
         if (j >= numbers.length) {
             j--;
             j %= numbers.length - 1;
             j++;
-            if (j == numbers.length - 1) {
+            if (j == numbers.length - 1)
                 j = 0;
-            }
         } else if (j <= 0) {
             j %= numbers.length - 1;
             j += numbers.length;
@@ -67,6 +80,16 @@ public class Day20 implements Day {
         for (int i = 0; i < numbers.length; i++)
             if (numbers[i].i == j) return i;
         throw new NoSuchElementException();
+    }
+
+    private Object getGroveSum(Number[] numbers) {
+        int i;
+        i = findZeroIndex(numbers);
+        long v1 = numbers[(i + 1000) % numbers.length].v;
+        long v2 = numbers[(i + 2000) % numbers.length].v;
+        long v3 = numbers[(i + 3000) % numbers.length].v;
+
+        return v1 + v2 + v3;
     }
 
     private static int findZeroIndex(Number[] numbers) {
@@ -99,23 +122,13 @@ public class Day20 implements Day {
         return array;
     }
 
-    @Override
-    public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
-    }
-
     static class Number {
         int i;
-        int v;
+        long v;
 
         public Number(int i, int v) {
             this.i = i;
             this.v = v;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(v);
         }
     }
 }

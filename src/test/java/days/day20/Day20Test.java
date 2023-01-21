@@ -13,7 +13,7 @@ class Day20Test {
     @Test
     void puzzle1() {
         try {
-            assertEquals(3, day.puzzle1(new File("src/main/resources/example_20.txt")));
+            assertEquals(3L, day.puzzle1(new File("src/main/resources/example_20.txt")));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -22,7 +22,7 @@ class Day20Test {
     @Test
     void puzzle2() {
         try {
-            assertEquals(33, day.puzzle2(new File("src/main/resources/example_20.txt")));
+            assertEquals(1623178306L, day.puzzle2(new File("src/main/resources/example_20.txt")));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
