@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +23,7 @@ class Day21Test {
     @Test
     void puzzle2() {
         try {
-            assertEquals(301, day.puzzle2(new File("src/main/resources/example_21.txt")));
+            assertEquals(301L, day.puzzle2(new File("src/main/resources/example_21.txt")));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
