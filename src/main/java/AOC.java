@@ -13,6 +13,7 @@ import days.day19.Day19;
 import days.day2.Day2;
 import days.day20.Day20;
 import days.day21.Day21;
+import days.day22.Day22;
 import days.day3.Day3;
 import days.day4.Day4;
 import days.day5.Day5;
@@ -29,10 +30,11 @@ public class AOC {
         try {
             Day[] days = {new Day1(), new Day2(), new Day3(), new Day4(), new Day5(), new Day6(), new Day7(),
                     new Day8(), new Day9(), new Day10(), new Day11(), new Day12(), new Day13(), new Day14(),
-                    new Day15(), new Day16(), new Day17(), new Day18(), new Day19(), new Day20(), new Day21()};
-            int day = 21;
+                    new Day15(), new Day16(), new Day17(), new Day18(), new Day19(), new Day20(), new Day21(),
+                    new Day22()};
+            int day = 22;
             System.out.println(days[day - 1].puzzle1(new File("src/main/resources/input_" + day + ".txt")));
-            System.out.println(days[day - 1].puzzle2(new File("src/main/resources/input_" + day + ".txt")));
+            // System.out.println(days[day - 1].puzzle2(new File("src/main/resources/input_" + day + ".txt")));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
