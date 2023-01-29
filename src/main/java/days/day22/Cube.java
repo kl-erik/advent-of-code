@@ -42,11 +42,11 @@ public abstract class Cube extends Board {
 
             if (x < 0) {
                 rotateLeft();
-            } else if (x >= sides[currentSide].length) {
+            } else if (x >= sideLength) {
                 rotateRight();
             } else if (y < 0) {
                 rotateUP();
-            } else if (y >= sides[currentSide].length) {
+            } else if (y >= sideLength) {
                 rotateDOWN();
             }
 
