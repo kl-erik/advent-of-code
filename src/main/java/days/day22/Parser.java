@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Parser {
-    public Board getBoard(Scanner scanner) {
+    public Square getBoard(Scanner scanner) {
         ArrayList<ArrayList<Character>> boardList = new ArrayList<>();
         int maxLength = 0;
 
@@ -37,7 +37,7 @@ public class Parser {
             board[i] = cs.toArray(new Character[0]);
         }
 
-        return new Board(board);
+        return new Square(board);
     }
 
     public String[] getPath(Scanner scanner) {
@@ -57,5 +57,58 @@ public class Parser {
         }
 
         return list.toArray(new String[0]);
+    }
+
+    public ExampleCube getExampleCube(Scanner scanner) {
+        ArrayList<Character[][]> sides = getSides(scanner);
+        return new ExampleCube(sides.toArray(new Character[0][][]));
+    }
+
+    public Cube getInputCube(Scanner scanner) {
+        ArrayList<Character[][]> sides = getSides(scanner);
+        return new InputCube(sides.toArray(new Character[0][][]));
+    }
+
+    private ArrayList<Character[][]> getSides(Scanner scanner) {
+        Character[][] board = getBoard(scanner).getBoard();
+        int sideLength = getSideLength(board);
+        ArrayList<Character[][]> sides = new ArrayList<>();
+
+        for (int i = 0; i < board.length; i += sideLength) {
+            for (int j = 0; j < board[i].length; j += sideLength) {
+                if (board[i][j] == ' ') {
+                    continue;
+                }
+
+                Character[][] side = new Character[sideLength][sideLength];
+
+                for (int k = 0; k < side.length; k++) {
+                    System.arraycopy(board[i + k], j, side[k], 0, side[k].length);
+                }
+
+                sides.add(side);
+            }
+        }
+
+        return sides;
+    }
+
+    private int getSideLength(Character[][] board) {
+        int minSideLength = board.length;
+        int sideLength;
+
+        for (Character[] characters : board) {
+            sideLength = 0;
+
+            for (Character character : characters) {
+                if (character != ' ') {
+                    sideLength++;
+                }
+            }
+
+            minSideLength = Math.min(minSideLength, sideLength);
+        }
+
+        return minSideLength;
     }
 }
