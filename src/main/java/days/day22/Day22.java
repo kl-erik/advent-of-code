@@ -9,21 +9,19 @@ import java.util.Scanner;
 public class Day22 implements Day {
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
-        Parser parser = new Parser();
         Scanner scanner = new Scanner(file);
-        Square square = parser.getBoard(scanner);
-        String[] path = parser.getPath(scanner);
+        Square square = Parser.getBoard(scanner);
+        String[] path = Parser.getPath(scanner);
         return solve(square, path);
     }
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        Parser parser = new Parser();
         Scanner scanner = new Scanner(file);
         Cube cube = file.getName().contains("example")
-                ? parser.getExampleCube(scanner)
-                : parser.getInputCube(scanner);
-        String[] path = parser.getPath(scanner);
+                ? Parser.getExampleCube(scanner)
+                : Parser.getInputCube(scanner);
+        String[] path = Parser.getPath(scanner);
         return solve(cube, path);
     }
 

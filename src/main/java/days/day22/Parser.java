@@ -3,8 +3,8 @@ package days.day22;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Parser {
-    public Square getBoard(Scanner scanner) {
+public abstract class Parser {
+    public static Square getBoard(Scanner scanner) {
         ArrayList<ArrayList<Character>> boardList = new ArrayList<>();
         int maxLength = 0;
 
@@ -40,7 +40,7 @@ public class Parser {
         return new Square(board);
     }
 
-    public String[] getPath(Scanner scanner) {
+    public static String[] getPath(Scanner scanner) {
         String line = scanner.nextLine();
         ArrayList<String> list = new ArrayList<>();
 
@@ -59,17 +59,17 @@ public class Parser {
         return list.toArray(new String[0]);
     }
 
-    public ExampleCube getExampleCube(Scanner scanner) {
+    public static ExampleCube getExampleCube(Scanner scanner) {
         ArrayList<Character[][]> sides = getSides(scanner);
         return new ExampleCube(sides.toArray(new Character[0][][]));
     }
 
-    public Cube getInputCube(Scanner scanner) {
+    public static Cube getInputCube(Scanner scanner) {
         ArrayList<Character[][]> sides = getSides(scanner);
         return new InputCube(sides.toArray(new Character[0][][]));
     }
 
-    private ArrayList<Character[][]> getSides(Scanner scanner) {
+    private static ArrayList<Character[][]> getSides(Scanner scanner) {
         Character[][] board = getBoard(scanner).getBoard();
         int sideLength = getSideLength(board);
         ArrayList<Character[][]> sides = new ArrayList<>();
@@ -93,7 +93,7 @@ public class Parser {
         return sides;
     }
 
-    private int getSideLength(Character[][] board) {
+    private static int getSideLength(Character[][] board) {
         int minSideLength = board.length;
         int sideLength;
 
