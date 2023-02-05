@@ -22,6 +22,21 @@ public class Day23 implements Day {
         return getEmptyTiles(groove, elves);
     }
 
+    @Override
+    public Object puzzle2(File file) throws FileNotFoundException {
+        Groove groove = Parser.parse(file);
+        Elf[] elves = getElves(groove);
+        char[] directions = {'N', 'S', 'W', 'E'};
+
+        int rounds = 1;
+        while (true) {
+            doFirstHalf(groove, elves, directions);
+            if (!doSecondHalf(groove, elves)) return rounds;
+            rotate(directions);
+            rounds++;
+        }
+    }
+
     private void doFirstHalf(Groove groove, Elf[] elves, char[] directions) {
         for (Elf elf : elves) {
             if (groove.hasAdjacentElf(elf)) {
@@ -75,15 +90,23 @@ public class Day23 implements Day {
         elf.nextX = elf.x;
     }
 
-    private static void doSecondHalf(Groove groove, Elf[] elves) {
+    private static boolean doSecondHalf(Groove groove, Elf[] elves) {
         for (Elf elf : elves) {
             if (elf.nextY != elf.y || elf.nextX != elf.x) {
                 tryMove(groove, elf);
             }
         }
+
+        int moves = 0;
+
         for (Elf elf : elves) {
-            move(groove, elf);
+            if (elf.nextY != elf.y || elf.nextX != elf.x) {
+                move(groove, elf);
+                moves++;
+            }
         }
+
+        return moves != 0;
     }
 
     private static void tryMove(Groove groove, Elf elf) {
@@ -156,10 +179,5 @@ public class Day23 implements Day {
         }
 
         return elves.toArray(new Elf[0]);
-    }
-
-    @Override
-    public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
     }
 }

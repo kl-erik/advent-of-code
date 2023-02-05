@@ -111,22 +111,4 @@ public class Groove {
     public Elf[][] getElves() {
         return elves;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Elf[] row : elves) {
-            for (Elf elf : row) {
-                if (elf == null) {
-                    stringBuilder.append('.');
-                } else {
-                    stringBuilder.append('#');
-                }
-            }
-
-            stringBuilder.append('\n');
-        }
-
-        return stringBuilder.toString();
-    }
 }

@@ -12,18 +12,18 @@ public class Parser {
 
         while (scanner.hasNext()) {
             char[] cs = scanner.nextLine().toCharArray();
-            Elf[] row = new Elf[cs.length + 20];
+            Elf[] row = new Elf[cs.length + 200];
 
             for (int i = 0; i < cs.length; i++) {
                 if (cs[i] == '#') {
-                    row[i + 10] = new Elf();
+                    row[i + 100] = new Elf();
                 }
             }
 
             elves.add(row);
         }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             elves.add(0, new Elf[elves.get(0).length]);
             elves.add(elves.size(), new Elf[elves.get(0).length]);
         }
