@@ -36,7 +36,7 @@ public class AOC {
                     new Day22(), new Day23(), new Day24()};
             int day = 24;
             System.out.println(days[day - 1].puzzle1(new File("src/main/resources/input_" + day + ".txt")));
-            // System.out.println(days[day - 1].puzzle2(new File("src/main/resources/input_" + day + ".txt")));
+            System.out.println(days[day - 1].puzzle2(new File("src/main/resources/input_" + day + ".txt")));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

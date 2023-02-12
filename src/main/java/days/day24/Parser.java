@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Parser {
-    public static Pair parse(File file) throws FileNotFoundException {
+    public static Node[][][] parse(File file) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
         scanner.nextLine(); // skip first line
         ArrayList<ArrayList<ArrayList<Character>>> valleyList = new ArrayList<>();
@@ -19,49 +19,7 @@ public class Parser {
         ArrayList<Character>[][][] valleyStates = generateAllStates(toArray(valleyList));
         Node[][][] nodes = toNodes(valleyStates);
         connect(nodes);
-
-        Node[] starts = new Node[nodes.length];
-        Node[] ends = new Node[nodes.length];
-        initNodes(starts, ends);
-        connectStartNodes(nodes, starts);
-        connectEndNodes(nodes, ends);
-        return new Pair(starts, ends);
-    }
-
-    private static void connectEndNodes(Node[][][] nodes, Node[] ends) {
-        int y = nodes[0].length;
-        int x = nodes[0][0].length;
-
-        for (int i = 0; i < nodes.length - 1; i++) {
-            if (nodes[i][y-1][x-1] != null) {
-                nodes[i][y-1][x-1].connect(ends[i+1]);
-            }
-        }
-
-        if (nodes[nodes.length - 1][y-1][x-1] != null) {
-            nodes[nodes.length - 1][y-1][x-1].connect(ends[0]);
-        }
-    }
-
-    private static void connectStartNodes(Node[][][] nodes, Node[] starts) {
-        for (int i = 0; i < nodes.length - 1; i++) {
-            starts[i].connect(starts[i+1]);
-
-            if (nodes[i+1][0][0] != null) {
-                starts[i].connect(nodes[i+1][0][0]);
-            }
-        }
-
-        if (nodes[0][0][0] != null) {
-            starts[starts.length - 1].connect(nodes[0][0][0]);
-        }
-    }
-
-    private static void initNodes(Node[] starts, Node[] ends) {
-        for (int i = 0; i < starts.length; i++) {
-            starts[i] = new Node();
-            ends[i] = new Node();
-        }
+        return nodes;
     }
 
     private static void connect(Node[][][] nodes) {
@@ -227,15 +185,5 @@ public class Parser {
             }
         }
         return valley;
-    }
-
-    public static class Pair {
-        public final Node[] starts;
-        public final Node[] ends;
-
-        public Pair(Node[] starts, Node[] ends) {
-            this.starts = starts;
-            this.ends = ends;
-        }
     }
 }
