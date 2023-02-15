@@ -28,10 +28,6 @@ public class Day25 implements Day {
 
         ArrayList<Character> snafu = toSnafu(sum);
 
-        if (snafu.get(snafu.size() - 1) == '0') {
-            snafu.remove(snafu.size() - 1);
-        }
-
         reverse(snafu);
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -45,7 +41,7 @@ public class Day25 implements Day {
     private ArrayList<Character> toSnafu(Long sum) {
         int grade = getGrade(sum);
         ArrayList<Character> snafu = new ArrayList<>();
-        for (int i = 0; i <= grade; i++) {
+        for (int i = 0; i < grade; i++) {
             snafu.add('0');
         }
 
