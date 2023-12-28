@@ -10,7 +10,7 @@ public class Day18Test extends TestCase {
 
     public void testPuzzle1() {
         try {
-            assertEquals(64, day.puzzle1(new File("src/test/resources/year/year2022/example_18.txt")));
+            assertEquals(64, day.puzzle1(new File("src/test/resources/year2022/example_18.txt")));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -18,7 +18,7 @@ public class Day18Test extends TestCase {
 
     public void testPuzzle2() {
         try {
-            assertEquals(58, day.puzzle2(new File("src/test/resources/year/year2022/example_18.txt")));
+            assertEquals(58, day.puzzle2(new File("src/test/resources/year2022/example_18.txt")));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
