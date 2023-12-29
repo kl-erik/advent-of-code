@@ -115,6 +115,95 @@ public class Day13 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        ArrayList<char[][]> patterns = parse(file);
+        int sum = 0;
+
+        for (char[][] pattern : patterns) {
+            try {
+                sum += findVerticalErrorLine(pattern);
+            } catch (NoSuchElementException ignore) {
+                sum += findHorizontalErrorLine(pattern);
+            }
+        }
+
+        return sum;
+    }
+
+    private int findVerticalErrorLine(char[][] pattern) {
+        for (int i = 0; i < pattern[0].length; i++) {
+            if (findVerticalError(i, i - 1, pattern)) {
+                return i;
+            }
+        }
+
+        throw new NoSuchElementException("Found no errors");
+    }
+
+    private int findHorizontalErrorLine(char[][] pattern) {
+        for (int i = 1; i < pattern.length; i++) {
+            if (findHorizontalError(i, i - 1, pattern)) {
+                return i * 100;
+            }
+        }
+
+        throw new NoSuchElementException("Found no errors");
+    }
+
+    private boolean findVerticalError(int i, int j, char[][] pattern) {
+        int errors = 0;
+
+        char[] columnI = new char[pattern.length];
+        char[] columnJ = new char[pattern.length];
+
+        while (i < pattern[0].length && j >= 0) {
+            for (int k = 0; k < pattern.length; k++) {
+                columnI[k] = pattern[k][i];
+                columnJ[k] = pattern[k][j];
+            }
+
+            if (!equal(columnI, columnJ)) {
+                errors += numberOfErrors(columnI, columnJ);
+
+                if (errors > 1) {
+                    return false;
+                }
+            }
+
+            i++;
+            j--;
+        }
+
+        return errors == 1;
+    }
+
+    private boolean findHorizontalError(int i, int j, char[][] pattern) {
+        int errors = 0;
+
+        while (i < pattern.length && j >= 0) {
+            if (!equal(pattern[i], pattern[j])) {
+                errors += numberOfErrors(pattern[i], pattern[j]);
+
+                if (errors > 1) {
+                    return false;
+                }
+            }
+
+            i++;
+            j--;
+        }
+
+        return errors == 1;
+    }
+
+    private int numberOfErrors(char[] chars, char[] chars1) {
+        int errors = 0;
+
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] != chars1[i]) {
+                errors++;
+            }
+        }
+
+        return errors;
     }
 }
