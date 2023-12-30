@@ -2,6 +2,7 @@ package year;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -76,5 +77,29 @@ public abstract class Utils {
 
     public static boolean even(int v) {
         return v % 2 == 0;
+    }
+
+    public static void print(char[][] chars) {
+        for (char[] row : chars) {
+            for (char c : row) {
+                System.out.print(c);
+            }
+
+            System.out.println();
+        }
+
+        System.out.println();
+    }
+
+    public static char[][] clone(char[][] chars) {
+        char[][] clone = new char[chars.length][];
+
+        for (int i = 0; i < chars.length; i++) {
+            char[] row = new char[chars[i].length];
+            System.arraycopy(chars[i], 0, row, 0, chars[i].length);
+            clone[i] = row;
+        }
+
+        return clone;
     }
 }
