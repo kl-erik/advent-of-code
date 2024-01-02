@@ -3,7 +3,7 @@ package year;
 import java.util.Objects;
 
 public class Point {
-    private final int x, y;
+    protected int x, y;
 
     public Point(int x, int y) {
         this.x = x;
@@ -21,7 +21,8 @@ public class Point {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null) return false;
+        if (!(o instanceof Point)) return false;
         Point point = (Point) o;
         return x == point.x && y == point.y;
     }
