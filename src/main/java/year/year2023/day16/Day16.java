@@ -74,24 +74,35 @@ public class Day16 implements Day {
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
         char[][] contraption = Utils.toMatrix(file);
+        char[][][] rotations = getRotations(contraption);
+
         int maxEnergized = 0;
 
-        for (int edge = 0; edge < 4; edge++) {
-            for (int i = 0; i < contraption.length; i++) {
+        for (char[][] rotation : rotations) {
+            for (int i = 0; i < rotation.length; i++) {
                 ArrayList<Beam> beams = new ArrayList<>();
                 beams.add(new Beam(i, -1, Direction.RIGHT));
-                int energized = calcEnergized(beams, contraption);
+                int energized = calcEnergized(beams, rotation);
 
                 if (energized > maxEnergized) {
                     maxEnergized = energized;
                 }
             }
-
-            contraption = Utils.rotate90Degrees(contraption);
-            flipMirrorsAndSplitters(contraption);
         }
 
         return maxEnergized;
+    }
+
+    private char[][][] getRotations(char[][] contraption) {
+        char[][] flipped = Utils.rotate90Degrees(contraption);
+        flipMirrorsAndSplitters(flipped);
+
+        char[][][] rotations = new char[4][][];
+        rotations[0] = contraption;
+        rotations[1] = flipped;
+        rotations[2] = Utils.rotate90Degrees(Utils.rotate90Degrees(contraption));
+        rotations[3] = Utils.rotate90Degrees(Utils.rotate90Degrees(flipped));
+        return rotations;
     }
 
     private void flipMirrorsAndSplitters(char[][] contraption) {
