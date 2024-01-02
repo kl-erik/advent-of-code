@@ -16,6 +16,10 @@ public class Day16 implements Day {
         char[][] contraption = Utils.toMatrix(file);
         ArrayList<Beam> beams = new ArrayList<>();
         beams.add(new Beam(0, -1, Direction.RIGHT));
+        return calcEnergized(beams, contraption);
+    }
+
+    private static int calcEnergized(ArrayList<Beam> beams, char[][] contraption) {
         HashMap<Point, HashSet<Direction>> energized = new HashMap<>();
 
         while (!beams.isEmpty()) {
@@ -69,7 +73,43 @@ public class Day16 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        char[][] contraption = Utils.toMatrix(file);
+        int maxEnergized = 0;
+
+        for (int edge = 0; edge < 4; edge++) {
+            for (int i = 0; i < contraption.length; i++) {
+                ArrayList<Beam> beams = new ArrayList<>();
+                beams.add(new Beam(i, -1, Direction.RIGHT));
+                int energized = calcEnergized(beams, contraption);
+
+                if (energized > maxEnergized) {
+                    maxEnergized = energized;
+                }
+            }
+
+            contraption = Utils.rotate90Degrees(contraption);
+            flipMirrorsAndSplitters(contraption);
+        }
+
+        return maxEnergized;
+    }
+
+    private void flipMirrorsAndSplitters(char[][] contraption) {
+        for (int i = 0; i < contraption.length; i++) {
+            for (int j = 0; j < contraption[i].length; j++) {
+                char tile = contraption[i][j];
+
+                if (tile == '|') {
+                    contraption[i][j] = '-';
+                } else if (tile == '-') {
+                    contraption[i][j] = '|';
+                } else if (tile == '/') {
+                    contraption[i][j] = '\\';
+                } else if (tile == '\\') {
+                    contraption[i][j] = '/';
+                }
+            }
+        }
     }
 
     private static class Beam extends Point {
