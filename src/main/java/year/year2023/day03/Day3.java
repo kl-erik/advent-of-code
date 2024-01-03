@@ -9,13 +9,13 @@ import java.io.FileNotFoundException;
 public class Day3 implements Day {
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
-        char[][] schematic = Utils.toMatrix(file);
+        char[][] schematic = Utils.toChars(file);
         return new Puzzle1().solve(schematic);
     }
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        char[][] schematic = Utils.toMatrix(file);
+        char[][] schematic = Utils.toChars(file);
         return new Puzzle2().solve(schematic);
     }
 }

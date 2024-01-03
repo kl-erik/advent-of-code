@@ -10,7 +10,7 @@ import java.util.*;
 public class Day14 implements Day {
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
-        char[][] platform = Utils.toMatrix(file);
+        char[][] platform = Utils.toChars(file);
         tiltNorth(platform);
         return calcTotalLoad(platform);
     }
@@ -48,7 +48,7 @@ public class Day14 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        Platform platform = new Platform(Utils.toMatrix(file));
+        Platform platform = new Platform(Utils.toChars(file));
         ArrayList<Platform> pattern = findPattern(platform);
         int trim = pattern.size();
         pattern.retainAll(findPattern(platform)); // run again with updated platform to remove initial states

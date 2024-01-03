@@ -24,7 +24,7 @@ public class Day11 implements Day {
     }
 
     private long solve(File file, int distanceFactor) throws FileNotFoundException {
-        char[][] image = Utils.toMatrix(file);
+        char[][] image = Utils.toChars(file);
 
         ArrayList<Integer> emptyRows = new ArrayList<>();
         for (int i = 0; i < image.length; i++) {

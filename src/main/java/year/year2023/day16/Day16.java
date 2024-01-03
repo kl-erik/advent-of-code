@@ -13,7 +13,7 @@ public class Day16 implements Day {
 
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
-        char[][] contraption = Utils.toMatrix(file);
+        char[][] contraption = Utils.toChars(file);
         ArrayList<Beam> beams = new ArrayList<>();
         beams.add(new Beam(0, -1, Direction.RIGHT));
         return calcEnergized(beams, contraption);
@@ -73,7 +73,7 @@ public class Day16 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        char[][] contraption = Utils.toMatrix(file);
+        char[][] contraption = Utils.toChars(file);
         char[][][] rotations = getRotations(contraption);
 
         int maxEnergized = 0;

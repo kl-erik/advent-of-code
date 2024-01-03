@@ -8,12 +8,12 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 import static year.Utils.even;
-import static year.Utils.toMatrix;
+import static year.Utils.toChars;
 
 public class Day10 implements Day {
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
-        char[][] tiles = toMatrix(file);
+        char[][] tiles = toChars(file);
         HashMap<Point, Node> pipes = getLoopPipes(tiles);
         return pipes.size() / 2;
     }
@@ -122,7 +122,7 @@ public class Day10 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        char[][] tiles = toMatrix(file);
+        char[][] tiles = toChars(file);
         HashMap<Point, Node> pipes = getLoopPipes(tiles);
 
         for (int i = 0; i < tiles.length; i++) {

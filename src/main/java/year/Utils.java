@@ -2,12 +2,11 @@ package year;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Stack;
 
 public abstract class Utils {
-    public static char[][] toMatrix(File file) throws FileNotFoundException {
+    public static char[][] toChars(File file) throws FileNotFoundException {
         int rows = getLength(file);
 
         char[][] matrix = new char[rows][];
@@ -101,5 +100,22 @@ public abstract class Utils {
         }
 
         return clone;
+    }
+
+    public static int[][] toInts(File file) throws FileNotFoundException {
+        char[][] chars = toChars(file);
+        int[][] ints = new int[chars.length][];
+
+        for (int i = 0; i < chars.length; i++) {
+            int[] row = new int[chars[i].length];
+
+            for (int j = 0; j < chars[i].length; j++) {
+                row[j] = Integer.parseInt(String.valueOf(chars[i][j]));
+            }
+
+            ints[i] = row;
+        }
+
+        return ints;
     }
 }
