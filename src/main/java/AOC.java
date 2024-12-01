@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 
 public class AOC {
     public static void main(String[] args) throws FileNotFoundException {
-        Day[][] aoc = new Day[2][];
+        Day[][] aoc = new Day[3][];
         aoc[0] = new Day[]{
                 new year.year2022.day01.Day1(), new year.year2022.day02.Day2(), new year.year2022.day03.Day3(),
                 new year.year2022.day04.Day4(), new year.year2022.day05.Day5(), new year.year2022.day06.Day6(),
@@ -28,12 +28,15 @@ public class AOC {
                 new year.year2023.day13.Day13(), new year.year2023.day14.Day14(), new Day15(),
                 new Day16(), new Day17()
         };
+        aoc[2] = new Day[]{
+                new year.year2024.day01.Day1()
+        };
 
-        int day = 17;
-        int year = 2023;
+        int day = 1;
+        int year = 2024;
 
-        String path = "src/main/resources/year" + year + "/input_" + day + ".txt";
-        // System.out.println(aoc[year - 2022][day - 1].puzzle1(new File(path)));
-        System.out.println(aoc[year - 2022][day - 1].puzzle2(new File(path))); // 987 too high
+        String path = "src/main/resources/year" + year + "/input_" + (day < 9 ? "0" : "") + day + ".txt";
+        System.out.println(aoc[year - 2022][day - 1].puzzle1(new File(path)));
+        // System.out.println(aoc[year - 2022][day - 1].puzzle2(new File(path)));
     }
 }
