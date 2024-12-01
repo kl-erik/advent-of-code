@@ -6,6 +6,7 @@ import year.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -26,7 +27,16 @@ public class Day1 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        ArrayList<String> lines = getLines(file);
+        ArrayList<Point> pairs = getPairs(lines);
+        PriorityQueue<Integer> list1 =
+                new PriorityQueue<>(pairs.stream().map(Point::getX).collect(Collectors.toList()));
+        PriorityQueue<Integer> list2 =
+                new PriorityQueue<>(pairs.stream().map(Point::getY).collect(Collectors.toList()));
+        list1.retainAll(list2);
+        list2.retainAll(list1);
+        HashMap<Integer, Integer> appearancesMap = new HashMap<>();
+        return list1.stream().mapToInt(x -> getAppearances(x, list2, appearancesMap)).sum();
     }
 
     private static ArrayList<String> getLines(File file) throws FileNotFoundException {
@@ -64,5 +74,14 @@ public class Day1 implements Day {
             distances.add(Math.abs(left - right));
         }
         return distances;
+    }
+
+    private int getAppearances(int x, PriorityQueue<Integer> list, HashMap<Integer, Integer> appearancesMap) {
+        if (!appearancesMap.containsKey(x)) {
+            int appearances = (int) list.stream().filter(y -> y == x).count();
+            appearancesMap.put(x, x * appearances);
+        }
+
+        return appearancesMap.get(x);
     }
 }
