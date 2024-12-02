@@ -14,11 +14,11 @@ public class Day2 implements Day {
         int[][] reports = parse(file);
         int sum = 0;
         for (int[] report : reports) {
-            if (isStronglyIncreasing(report)) {
+            if (isStronglyIncreasing(report) < 0) {
                 sum++;
             } else {
                 reverse(report);
-                if (isStronglyIncreasing(report)) {
+                if (isStronglyIncreasing(report) < 0) {
                     sum++;
                 }
             }
@@ -26,13 +26,13 @@ public class Day2 implements Day {
         return sum;
     }
 
-    private boolean isStronglyIncreasing(int[] report) {
+    private int isStronglyIncreasing(int[] report) {
         for (int i = 1; i < report.length; i++) {
             if (report[i] <= report[i - 1] || report[i] - report[i - 1] > 3) {
-                return false;
+                return i;
             }
         }
-        return true;
+        return -1;
     }
 
     private void reverse(int[] report) {
@@ -65,6 +65,31 @@ public class Day2 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        int[][] reports = parse(file);
+        int sum = 0;
+        for (int[] report : reports) {
+            int i;
+            if ((i = isStronglyIncreasing(report)) < 0
+                    || isStronglyIncreasing(copy(report, i)) < 0
+                    || isStronglyIncreasing(copy(report, i - 1)) < 0) {
+                sum++;
+            } else {
+                reverse(report);
+                if ((i = isStronglyIncreasing(report)) < 0
+                        || isStronglyIncreasing(copy(report, i)) < 0
+                        || isStronglyIncreasing(copy(report, i - 1)) < 0) {
+                    sum++;
+                }
+            }
+        }
+        return sum;
+    }
+
+    private int[] copy(int[] report, int skip) {
+        int[] copy = new int[report.length - 1];
+        if (skip >= 0) System.arraycopy(report, 0, copy, 0, skip);
+        if (report.length - (skip + 1) >= 0)
+            System.arraycopy(report, skip + 1, copy, skip + 1 - 1, report.length - (skip + 1));
+        return copy;
     }
 }
