@@ -2,6 +2,7 @@ package year;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -117,5 +118,16 @@ public abstract class Utils {
         }
 
         return ints;
+    }
+
+    public static ArrayList<String> getLines(File file) throws FileNotFoundException {
+        Scanner scanner = new Scanner(file);
+        ArrayList<String> lines = new ArrayList<>();
+
+        while (scanner.hasNext()) {
+            lines.add(scanner.nextLine());
+        }
+
+        return lines;
     }
 }

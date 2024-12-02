@@ -8,9 +8,10 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
-import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static year.Utils.getLines;
 
 public class Day1 implements Day {
     @Override
@@ -37,17 +38,6 @@ public class Day1 implements Day {
         list2.retainAll(list1);
         HashMap<Integer, Integer> appearancesMap = new HashMap<>();
         return list1.stream().mapToInt(x -> getAppearances(x, list2, appearancesMap)).sum();
-    }
-
-    private static ArrayList<String> getLines(File file) throws FileNotFoundException {
-        Scanner scanner = new Scanner(file);
-        ArrayList<String> lines = new ArrayList<>();
-
-        while (scanner.hasNext()) {
-            lines.add(scanner.nextLine());
-        }
-
-        return lines;
     }
 
     private ArrayList<Point> getPairs(ArrayList<String> lines) {
