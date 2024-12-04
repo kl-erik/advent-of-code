@@ -2,6 +2,7 @@ import year.Day;
 import year.year2023.day15.Day15;
 import year.year2023.day16.Day16;
 import year.year2023.day17.Day17;
+import year.year2024.day03.Day3;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,10 +30,10 @@ public class AOC {
                 new Day16(), new Day17()
         };
         aoc[2] = new Day[]{
-                new year.year2024.day01.Day1(), new year.year2024.day02.Day2()
+                new year.year2024.day01.Day1(), new year.year2024.day02.Day2(), new Day3()
         };
 
-        int day = 2;
+        int day = 3;
         int year = 2024;
 
         String path = "src/main/resources/year" + year + "/input_" + (day < 9 ? "0" : "") + day + ".txt";
