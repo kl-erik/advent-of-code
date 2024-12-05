@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static year.Utils.rotate90Degrees;
+import static year.Utils.rotateCharMatrix90Degrees;
 
 public class Puzzle1 {
     public static Object solve(char[][] wordSearch) {
@@ -13,7 +13,7 @@ public class Puzzle1 {
         for (int i = 0; i < 4; i++) {
             lineDirections.add(getHorizontalLines(wordSearch));
             lineDirections.add(getDiagonalLines(wordSearch));
-            wordSearch = rotate90Degrees(wordSearch);
+            wordSearch = rotateCharMatrix90Degrees(wordSearch);
         }
 
         int sum = 0;

@@ -76,7 +76,7 @@ public class Day14 implements Day {
     private static void cycle(Platform platform) {
         for (int i = 0; i < 4; i++) {
             tiltNorth(platform.matrix);
-            platform.matrix = Utils.rotate90Degrees(platform.matrix);
+            platform.matrix = Utils.rotateCharMatrix90Degrees(platform.matrix);
         }
     }
 

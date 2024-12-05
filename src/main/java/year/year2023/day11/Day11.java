@@ -34,7 +34,7 @@ public class Day11 implements Day {
         }
 
         ArrayList<Integer> emptyCols = new ArrayList<>();
-        char[][] tmpImage = Utils.rotate90Degrees(image);
+        char[][] tmpImage = Utils.rotateCharMatrix90Degrees(image);
         for (int i = 0; i < tmpImage.length; i++) {
             if (hasOnlyEmptySpace(tmpImage[i])) {
                 emptyCols.add(i);

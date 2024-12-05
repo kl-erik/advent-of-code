@@ -94,14 +94,14 @@ public class Day16 implements Day {
     }
 
     private char[][][] getRotations(char[][] contraption) {
-        char[][] flipped = Utils.rotate90Degrees(contraption);
+        char[][] flipped = Utils.rotateCharMatrix90Degrees(contraption);
         flipMirrorsAndSplitters(flipped);
 
         char[][][] rotations = new char[4][][];
         rotations[0] = contraption;
         rotations[1] = flipped;
-        rotations[2] = Utils.rotate90Degrees(Utils.rotate90Degrees(contraption));
-        rotations[3] = Utils.rotate90Degrees(Utils.rotate90Degrees(flipped));
+        rotations[2] = Utils.rotateCharMatrix90Degrees(Utils.rotateCharMatrix90Degrees(contraption));
+        rotations[3] = Utils.rotateCharMatrix90Degrees(Utils.rotateCharMatrix90Degrees(flipped));
         return rotations;
     }
 

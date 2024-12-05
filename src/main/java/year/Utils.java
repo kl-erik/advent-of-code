@@ -44,7 +44,7 @@ public abstract class Utils {
     }
 
 
-    public static char[][] rotate90Degrees(char[][] matrix) {
+    public static char[][] rotateCharMatrix90Degrees(char[][] matrix) {
         int m = matrix.length;
         int n = matrix[0].length;
 
