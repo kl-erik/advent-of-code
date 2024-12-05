@@ -2,6 +2,7 @@ package year;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Stack;
@@ -56,6 +57,20 @@ public abstract class Utils {
         }
 
         return rotatedState;
+    }
+
+    public static <T> T[][] rotateMatrix90Degrees(T[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        T[][] rotatedMatrix = (T[][]) Array.newInstance(matrix[0][0].getClass(), n, m);
+
+        for (int row = 0; row < m; row++) {
+            for (int col = 0; col < n; col++) {
+                rotatedMatrix[col][m - row - 1] = matrix[row][col];
+            }
+        }
+
+        return rotatedMatrix;
     }
 
     public static int[] toInts(String[] split) {

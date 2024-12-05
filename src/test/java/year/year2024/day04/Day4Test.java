@@ -13,6 +13,6 @@ public class Day4Test extends TestCase {
     }
 
     public void testPuzzle2() throws FileNotFoundException {
-        // assertEquals(161, day.puzzle2(new File("src/test/resources/year2024/input_04.txt")));
+        assertEquals(9, day.puzzle2(new File("src/test/resources/year2024/input_04.txt")));
     }
 }
