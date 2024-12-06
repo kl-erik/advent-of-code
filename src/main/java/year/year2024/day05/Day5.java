@@ -5,6 +5,7 @@ import year.Day;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -23,19 +24,12 @@ public class Day5 implements Day {
 
         for (ArrayList<Integer> pages : pageList) {
             ArrayList<Integer> sorted = new ArrayList<>(pages);
-            sorted.sort((t1, t2) -> {
-                if (rules.containsKey(t1) && rules.get(t1).contains(t2)) {
-                    return -1;
-                } else if (rules.containsKey(t2) && rules.get(t2).contains(t1)) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            });
+            sorted.sort(ruleComparator());
             if (sorted.equals(pages)) {
                 sum += pages.get(pages.size() % 2 == 0 ? pages.size() / 2 : (pages.size() - 1) / 2);
             }
         }
+
         return sum;
     }
 
@@ -76,8 +70,32 @@ public class Day5 implements Day {
         return pages;
     }
 
+    private Comparator<Integer> ruleComparator() {
+        return (t1, t2) -> {
+            if (rules.containsKey(t1) && rules.get(t1).contains(t2)) {
+                return -1;
+            } else if (rules.containsKey(t2) && rules.get(t2).contains(t1)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        };
+    }
+
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        ArrayList<ArrayList<Integer>> pageList = SetUpRulesAndGetPages(file);
+
+        int sum = 0;
+
+        for (ArrayList<Integer> pages : pageList) {
+            ArrayList<Integer> sorted = new ArrayList<>(pages);
+            sorted.sort(ruleComparator());
+            if (!sorted.equals(pages)) {
+                sum += sorted.get(sorted.size() % 2 == 0 ? sorted.size() / 2 : (sorted.size() - 1) / 2);
+            }
+        }
+
+        return sum;
     }
 }
