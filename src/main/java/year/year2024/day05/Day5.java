@@ -14,17 +14,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day5 implements Day {
-    HashMap<Integer, Set<Integer>> rules = new HashMap<>();
+    private static Comparator<Integer> comparator;
 
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
-        ArrayList<ArrayList<Integer>> pageList = SetUpRulesAndGetPages(file);
+        ArrayList<ArrayList<Integer>> pageList = SetUpComparatorAndGetPages(file);
 
         int sum = 0;
 
         for (ArrayList<Integer> pages : pageList) {
             ArrayList<Integer> sorted = new ArrayList<>(pages);
-            sorted.sort(ruleComparator());
+            sorted.sort(comparator);
             if (sorted.equals(pages)) {
                 sum += pages.get(pages.size() % 2 == 0 ? pages.size() / 2 : (pages.size() - 1) / 2);
             }
@@ -33,9 +33,10 @@ public class Day5 implements Day {
         return sum;
     }
 
-    private ArrayList<ArrayList<Integer>> SetUpRulesAndGetPages(File file) throws FileNotFoundException {
+    private ArrayList<ArrayList<Integer>> SetUpComparatorAndGetPages(File file) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
 
+        HashMap<Integer, Set<Integer>> rules = new HashMap<>();
         Pattern rulePattern = Pattern.compile("(?<lt>\\d*)\\|(?<gt>\\d*)");
         String line;
         while (scanner.hasNext() && !(line = scanner.nextLine()).isEmpty()) {
@@ -56,6 +57,16 @@ public class Day5 implements Day {
             }
         }
 
+        comparator = (t1, t2) -> {
+                if (rules.containsKey(t1) && rules.get(t1).contains(t2)) {
+                    return -1;
+                } else if (rules.containsKey(t2) && rules.get(t2).contains(t1)) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+        };
+
         ArrayList<ArrayList<Integer>> pages = new ArrayList<>();
 
         while (scanner.hasNext()) {
@@ -70,27 +81,15 @@ public class Day5 implements Day {
         return pages;
     }
 
-    private Comparator<Integer> ruleComparator() {
-        return (t1, t2) -> {
-            if (rules.containsKey(t1) && rules.get(t1).contains(t2)) {
-                return -1;
-            } else if (rules.containsKey(t2) && rules.get(t2).contains(t1)) {
-                return 1;
-            } else {
-                return 0;
-            }
-        };
-    }
-
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        ArrayList<ArrayList<Integer>> pageList = SetUpRulesAndGetPages(file);
+        ArrayList<ArrayList<Integer>> pageList = SetUpComparatorAndGetPages(file);
 
         int sum = 0;
 
         for (ArrayList<Integer> pages : pageList) {
             ArrayList<Integer> sorted = new ArrayList<>(pages);
-            sorted.sort(ruleComparator());
+            sorted.sort(comparator);
             if (!sorted.equals(pages)) {
                 sum += sorted.get(sorted.size() % 2 == 0 ? sorted.size() / 2 : (sorted.size() - 1) / 2);
             }
