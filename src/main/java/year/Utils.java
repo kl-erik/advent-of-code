@@ -83,7 +83,6 @@ public abstract class Utils {
         return ints;
     }
 
-
     public static <T> Stack<T> clone(Stack<T> orig) {
         Stack<T> clone = new Stack<>();
         clone.addAll(orig);
@@ -115,6 +114,14 @@ public abstract class Utils {
             clone[i] = row;
         }
 
+        return clone;
+    }
+
+    public static <T> T[][] clone(T[][] array) {
+        T[][] clone = (T[][]) Array.newInstance(array[0][0].getClass(), array.length, array[0].length);
+        for (int i = 0; i < array.length; i++) {
+            System.arraycopy(array[i], 0, clone[i], 0, array[i].length);
+        }
         return clone;
     }
 

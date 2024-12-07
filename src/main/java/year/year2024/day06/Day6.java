@@ -16,6 +16,7 @@ public class Day6 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        char[][] map = Utils.toChars(file);
+        return Puzzle2.solve(map);
     }
 }
