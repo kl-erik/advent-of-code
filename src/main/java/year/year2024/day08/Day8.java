@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Day8 implements Day {
     @Override
@@ -16,8 +15,8 @@ public class Day8 implements Day {
         char[][] map = Utils.toChars(file);
 
         HashMap<Character, ArrayList<Point>> antennaLocations = getAntennaLocations(map);
-        for (Map.Entry<Character, ArrayList<Point>> entry : antennaLocations.entrySet()) {
-            ArrayList<Point> points = entry.getValue();
+        for (char c : antennaLocations.keySet()) {
+            ArrayList<Point> points = antennaLocations.get(c);
 
             for (int i = 0; i < points.size(); i++) {
                 for (int j = i + 1; j < points.size(); j++) {
@@ -33,8 +32,6 @@ public class Day8 implements Day {
                     int pyi = iy + dyi;
                     int pxj = jx + dxj;
                     int pyj = jy + dyj;
-
-                    char c = entry.getKey();
 
                     try {
                         if (map[pyi][pxi] != c) {
@@ -96,6 +93,58 @@ public class Day8 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        char[][] map = Utils.toChars(file);
+
+        HashMap<Character, ArrayList<Point>> antennaLocations = getAntennaLocations(map);
+        for (char c : antennaLocations.keySet()) {
+            ArrayList<Point> points = antennaLocations.get(c);
+
+            for (int i = 0; i < points.size(); i++) {
+                for (int j = i + 1; j < points.size(); j++) {
+                    int ix = points.get(i).getX();
+                    int iy = points.get(i).getY();
+                    int jx = points.get(j).getX();
+                    int jy = points.get(j).getY();
+                    int dxi = ix - jx;
+                    int dyi = iy - jy;
+                    int dxj = jx - ix;
+                    int dyj = jy - iy;
+
+                    drawLine(map, ix, iy, dxi, dyi);
+                    drawLine(map, jx, jy, dxj, dyj);
+
+                    map[points.get(i).getY()][points.get(i).getX()] = '#';
+                    map[points.get(j).getY()][points.get(j).getX()] = '#';
+                }
+            }
+        }
+
+        int sum = 0;
+
+        for (char[] row : map) {
+            for (char c : row) {
+                if (c == '#') {
+                    sum++;
+                }
+            }
+        }
+
+        return sum;
+    }
+
+    private void drawLine(char[][] map, int ix, int iy, int dxi, int dyi) {
+        while (true) {
+            try {
+                int pxi = ix + dxi;
+                int pyi = iy + dyi;
+
+                map[pyi][pxi] = '#';
+
+                ix = pxi;
+                iy = pyi;
+            } catch (ArrayIndexOutOfBoundsException ignored) {
+                break;
+            }
+        }
     }
 }
