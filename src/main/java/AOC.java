@@ -8,6 +8,7 @@ import year.year2024.day05.Day5;
 import year.year2024.day06.Day6;
 import year.year2024.day07.Day7;
 import year.year2024.day08.Day8;
+import year.year2024.day09.Day9;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,14 +37,14 @@ public class AOC {
         };
         aoc[2] = new Day[]{
                 new year.year2024.day01.Day1(), new year.year2024.day02.Day2(), new Day3(), new Day4(), new Day5(),
-                new Day6(), new Day7(), new Day8()
+                new Day6(), new Day7(), new Day8(), new Day9()
         };
 
-        int day = 8;
+        int day = 9;
         int year = 2024;
 
-        String path = "src/main/resources/year" + year + "/input_" + (day < 9 ? "0" : "") + day + ".txt";
-        // System.out.println(aoc[year - 2022][day - 1].puzzle1(new File(path)));
-        System.out.println(aoc[year - 2022][day - 1].puzzle2(new File(path)));
+        String path = "src/main/resources/year" + year + "/input_" + (day <= 9 ? "0" : "") + day + ".txt";
+        System.out.println(aoc[year - 2022][day - 1].puzzle1(new File(path)));
+        // System.out.println(aoc[year - 2022][day - 1].puzzle2(new File(path)));
     }
 }
