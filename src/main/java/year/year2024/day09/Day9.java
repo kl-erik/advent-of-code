@@ -5,57 +5,35 @@ import year.Day;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Day9 implements Day {
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
         ArrayList<Block> diskMap = parse(new java.util.Scanner(file).nextLine().toCharArray());
+        int lastFileSpacePos = diskMap.size() - 1;
 
-        long checksum = 0;
+        int firstEmptySpacePos;
+        while ((firstEmptySpacePos = getNextEmptySpacePos(diskMap, 1)) < lastFileSpacePos) {
+            Block emptySpace = diskMap.get(firstEmptySpacePos);
 
-        int p_ = -1;
-        int p = p_;
+            while ((lastFileSpacePos = getLastFileSpacePos(diskMap, diskMap.size() - 1)) > firstEmptySpacePos
+                    && emptySpace.length > 0) {
+                Block fileSpace = diskMap.get(lastFileSpacePos);
 
-        int j = diskMap.get(diskMap.size() - 1) instanceof FileSpace ? diskMap.size() - 1 : diskMap.size() - 2;
-        for (int i = 0; i < diskMap.size(); i++) {
-            Block block = diskMap.get(i);
-
-            if (block instanceof FileSpace) {
-                FileSpace fileSpace = (FileSpace) block;
-                p_ = p + fileSpace.length;
-                checksum += fileSpace.id * (sumUpTo(p_) - sumUpTo(p));
-                p = p_;
-            } else {
-                EmptySpace emptySpace = (EmptySpace) block;
-
-                while (emptySpace.length > 0 && j > i) {
-                    FileSpace fileSpace = (FileSpace) diskMap.get(j);
-
-                    if (fileSpace.length == 0) {
-                        j -= 2;
-                        continue;
-                    }
-
-                    if (fileSpace.length <= emptySpace.length) {
-                        p_ = p + fileSpace.length;
-                        checksum += fileSpace.id * (sumUpTo(p_) - sumUpTo(p));
-                        emptySpace.length -= fileSpace.length;
-                        fileSpace.length = 0;
-                    } else {
-                        p_ = p + emptySpace.length;
-                        checksum += fileSpace.id * (sumUpTo(p_) - sumUpTo(p));
-                        fileSpace.length -= emptySpace.length;
-                        emptySpace.length = 0;
-                    }
-
-                    p = p_;
+                if (emptySpace.length < fileSpace.length) {
+                    diskMap.add(diskMap.indexOf(emptySpace), new Block(fileSpace.id, emptySpace.length));
+                    diskMap.remove(emptySpace);
+                    fileSpace.length -= emptySpace.length;
+                    break;
+                } else {
+                    diskMap.set(diskMap.indexOf(fileSpace), new Block(0, fileSpace.length));
+                    diskMap.add(diskMap.indexOf(emptySpace), fileSpace);
+                    emptySpace.length -= fileSpace.length;
                 }
             }
         }
 
-        return checksum;
+        return calcChecksum(diskMap);
     }
 
     private long sumUpTo(int n) {
@@ -65,16 +43,14 @@ public class Day9 implements Day {
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
         ArrayList<Block> diskMap = parse(new java.util.Scanner(file).nextLine().toCharArray());
-        Set<FileSpace> visited = new HashSet<>();
+        int lastFileSpacePos = getLastFileSpacePos(diskMap, diskMap.size() - 1);
 
-        int lastFileSpacePos = getLastFilePos(diskMap, visited, diskMap.size() - 1);
-        int firstEmptySpacePos = getNextEmptySpacePos(diskMap, 0);
-
-        while (lastFileSpacePos > firstEmptySpacePos) {
-            FileSpace fileSpace = (FileSpace) diskMap.get(lastFileSpacePos);
+        int firstEmptySpacePos;
+        while (lastFileSpacePos > (firstEmptySpacePos = getNextEmptySpacePos(diskMap, 1))) {
+            Block fileSpace = diskMap.get(lastFileSpacePos);
 
             while (firstEmptySpacePos < lastFileSpacePos) {
-                EmptySpace emptySpace = (EmptySpace) diskMap.get(firstEmptySpacePos);
+                Block emptySpace = diskMap.get(firstEmptySpacePos);
 
                 if (emptySpace.length == 0) {
                     diskMap.remove(firstEmptySpacePos);
@@ -87,38 +63,30 @@ public class Day9 implements Day {
                     continue;
                 }
 
-                emptySpace.length -= fileSpace.length;
+                if (emptySpace.length > fileSpace.length) {
+                    emptySpace.length -= fileSpace.length;
+                    diskMap.set(lastFileSpacePos, new Block(0, fileSpace.length));
+                    diskMap.add(firstEmptySpacePos, fileSpace);
+                    break;
+                }
 
-                diskMap.set(lastFileSpacePos, new EmptySpace(fileSpace.length));
-                diskMap.add(firstEmptySpacePos, fileSpace);
-                visited.add(fileSpace);
-
+                diskMap.set(lastFileSpacePos, new Block(0, fileSpace.length));
+                diskMap.set(firstEmptySpacePos, fileSpace);
                 break;
             }
 
-            lastFileSpacePos = getLastFilePos(diskMap, visited, lastFileSpacePos - 1);
-            firstEmptySpacePos = getNextEmptySpacePos(diskMap, 0);
+            lastFileSpacePos = getLastFileSpacePos(diskMap, lastFileSpacePos - 1);
         }
 
-        long checksum = 0;
-
-        int p = -1;
-
-        for (Block block : diskMap) {
-            int p_ = p + block.length;
-            checksum += block.id * (sumUpTo(p_) - sumUpTo(p));
-            p = p_;
-        }
-
-        return checksum;
+        return calcChecksum(diskMap);
     }
 
-    private int getLastFilePos(ArrayList<Block> diskMap, Set<FileSpace> visited, int start) {
+    private int getLastFileSpacePos(ArrayList<Block> diskMap, int start) {
         int i;
         for (i = start; i >= 0; i--) {
             Block block = diskMap.get(i);
 
-            if (block instanceof FileSpace && !visited.contains(block)) {
+            if (block.id != 0) {
                 break;
             }
         }
@@ -130,11 +98,24 @@ public class Day9 implements Day {
         for (i = start; i < diskMap.size(); i++) {
             Block block = diskMap.get(i);
 
-            if (block instanceof EmptySpace && block.length > 0) {
+            if (block.id == 0 && block.length > 0) {
                 break;
             }
         }
         return i;
+    }
+
+    private long calcChecksum(ArrayList<Block> diskMap) {
+        long checksum = 0;
+
+        int p = -1;
+        for (Block block : diskMap) {
+            int p_ = p + block.length;
+            checksum += block.id * (sumUpTo(p_) - sumUpTo(p));
+            p = p_;
+        }
+
+        return checksum;
     }
 
     private ArrayList<Block> parse(char[] cs) {
@@ -144,34 +125,22 @@ public class Day9 implements Day {
             int length = Integer.parseInt(String.valueOf(cs[i]));
 
             if (i % 2 == 0) {
-                blocks.add(new FileSpace(id, length));
+                blocks.add(new Block(id, length));
                 id++;
             } else {
-                blocks.add(new EmptySpace(length));
+                blocks.add(new Block(0, length));
             }
         }
         return blocks;
     }
 
-    private abstract static class Block {
-        int length;
+    private static class Block {
         int id;
+        int length;
 
-        public Block(int length, int id) {
-            this.length = length;
+        public Block(int id, int length) {
             this.id = id;
-        }
-    }
-
-    private static class FileSpace extends Block {
-        public FileSpace(int id, int length) {
-            super(length, id);
-        }
-    }
-
-    private static class EmptySpace extends Block {
-        public EmptySpace(int length) {
-            super(length, 0);
+            this.length = length;
         }
     }
 }
