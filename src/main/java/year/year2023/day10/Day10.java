@@ -1,6 +1,7 @@
 package year.year2023.day10;
 
 import year.Day;
+import year.Node;
 import year.Point;
 
 import java.io.File;
@@ -33,10 +34,11 @@ public class Day10 implements Day {
             for (int x = 0; x < tiles[y].length; x++) {
                 if (tiles[y][x] != '.') {
                     ArrayList<Node> neighbours = getNeighbours(tiles, x, y, nodes);
-                    Node node = new Node(neighbours);
+                    Node node = new Node();
 
                     for (Node neighbour : neighbours) {
-                        neighbour.neighbours.add(node);
+                        node.connect(neighbour);
+                        neighbour.connect(node);
                     }
 
                     nodes.put(new Point(x, y), node);
@@ -103,7 +105,7 @@ public class Day10 implements Day {
         while (true) {
             boolean circle = true;
 
-            for (Node neighbour : node.neighbours) {
+            for (Node neighbour : node.getNeighbours()) {
                 if (!visited.contains(neighbour)) {
                     visited.add(neighbour);
                     node = neighbour;
@@ -250,13 +252,5 @@ public class Day10 implements Day {
             }
         }
         return right;
-    }
-
-    static class Node {
-        final ArrayList<Node> neighbours;
-
-        public Node(ArrayList<Node> neighbours) {
-            this.neighbours = neighbours;
-        }
     }
 }

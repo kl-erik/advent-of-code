@@ -1,6 +1,7 @@
 package year.year2022.day24;
 
 import year.Day;
+import year.Node;
 
 import java.io.File;
 import java.io.FileNotFoundException;

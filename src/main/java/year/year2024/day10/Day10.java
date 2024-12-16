@@ -1,6 +1,7 @@
 package year.year2024.day10;
 
 import year.Day;
+import year.Node;
 import year.Utils;
 
 import java.io.File;
@@ -32,10 +33,10 @@ public class Day10 implements Day {
             ArrayList<Node> visitNext = new ArrayList<>();
 
             for (Node node : toVisit) {
-                if (node.neighbours.isEmpty()) {
+                if (node.getNeighbours().isEmpty()) {
                     endNodes.add(node);
                 } else {
-                    visitNext.addAll(node.neighbours);
+                    visitNext.addAll(node.getNeighbours());
                 }
             }
 
@@ -60,16 +61,16 @@ public class Day10 implements Day {
             for (int j = 0; j < map[i].length; j++) {
                 Node node = nodes[i][j];
                 if (i > 0 && map[i][j] == map[i - 1][j] - 1) {
-                    node.neighbours.add(nodes[i - 1][j]);
+                    node.connect(nodes[i - 1][j]);
                 }
                 if (i < map.length - 1 && map[i][j] == map[i + 1][j] - 1) {
-                    node.neighbours.add(nodes[i + 1][j]);
+                    node.connect(nodes[i + 1][j]);
                 }
                 if (j > 0 && map[i][j] == map[i][j - 1] - 1) {
-                    node.neighbours.add(nodes[i][j - 1]);
+                    node.connect(nodes[i][j - 1]);
                 }
                 if (j < map[i].length - 1 && map[i][j] == map[i][j + 1] - 1) {
-                    node.neighbours.add(nodes[i][j + 1]);
+                    node.connect(nodes[i][j + 1]);
                 }
             }
         }
@@ -108,13 +109,5 @@ public class Day10 implements Day {
             sum += (int) endNodes.stream().filter(sinks::contains).count();
         }
         return sum;
-    }
-
-    private static class Node {
-        private final ArrayList<Node> neighbours;
-
-        public Node() {
-            this.neighbours = new ArrayList<>();
-        }
     }
 }
