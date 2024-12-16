@@ -6,8 +6,6 @@ import year.Utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Day10 implements Day {
     @Override
@@ -19,32 +17,28 @@ public class Day10 implements Day {
         ArrayList<Node> sinks = getSinks(map, nodes);
         int sum = 0;
         for (Node source : sources) {
-            Set<Node> endNodes = bfs(source);
+            ArrayList<Node> endNodes = bfs(source);
             sum += (int) sinks.stream().filter(endNodes::contains).count();
         }
         return sum;
     }
 
-    private static Set<Node> bfs(Node source) {
-        Set<Node> endNodes = new HashSet<>();
-        Set<Node> visited = new HashSet<>();
-        Set<Node> toVisit = new HashSet<>();
+    private static ArrayList<Node> bfs(Node source) {
+        ArrayList<Node> endNodes = new ArrayList<>();
+        ArrayList<Node> toVisit = new ArrayList<>();
         toVisit.add(source);
 
         while (!toVisit.isEmpty()) {
-            Set<Node> visitNext = new HashSet<>();
+            ArrayList<Node> visitNext = new ArrayList<>();
 
             for (Node node : toVisit) {
-                visited.add(node);
-
-                if (node.neighbours.isEmpty() || visited.containsAll(node.neighbours)) {
+                if (node.neighbours.isEmpty()) {
                     endNodes.add(node);
                 } else {
                     visitNext.addAll(node.neighbours);
                 }
             }
 
-            visitNext.removeAll(visited);
             toVisit = visitNext;
         }
 
@@ -103,7 +97,17 @@ public class Day10 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        int[][] map = Utils.toInts(file);
+        Node[][] nodes = getNodes(map);
+        addEdges(map, nodes);
+        ArrayList<Node> sources = getSources(map, nodes);
+        ArrayList<Node> sinks = getSinks(map, nodes);
+        int sum = 0;
+        for (Node source : sources) {
+            ArrayList<Node> endNodes = bfs(source);
+            sum += (int) endNodes.stream().filter(sinks::contains).count();
+        }
+        return sum;
     }
 
     private static class Node {
