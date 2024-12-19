@@ -45,18 +45,18 @@ public class Day11 implements Day {
         for (long stone : stones) {
             newStones += expandTree(stone, 0);
         }
-        return newStones;
+        return stones.size() + newStones;
     }
 
     private long expandTree(long stone, int i) {
-        if (map.containsKey(stone) && map.get(stone).containsKey(i)) {
-            return map.get(stone).get(i);
-        }
-
-        long newStones = 1;
+        long newStones = 0;
         long originalStone = stone;
 
         for (int j = i; j < 75; j++) {
+            if (map.containsKey(stone) && map.get(stone).containsKey(j)) {
+                newStones += map.get(stone).get(j);
+                break;
+            }
 
             if (stone == 0) {
                 stone = 1L;
@@ -66,7 +66,7 @@ public class Day11 implements Day {
                     long firstHalf = Long.parseLong(stoneString.substring(0, stoneString.length() / 2));
                     long secondHalf = Long.parseLong(stoneString.substring(stoneString.length() / 2));
                     stone = firstHalf;
-                    newStones += expandTree(secondHalf, j + 1);
+                    newStones += 1 + expandTree(secondHalf, j + 1);
                 } else {
                     stone *= 2024;
                 }
