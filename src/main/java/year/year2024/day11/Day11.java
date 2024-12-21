@@ -13,25 +13,21 @@ public class Day11 implements Day {
     public Object puzzle1(File file) throws FileNotFoundException {
         ArrayList<Long> stones = parse(file);
         for (int i = 0; i < 25; i++) {
-            HashMap<Integer, Long> newStones = new HashMap<>();
-            for (int j = 0; j < stones.size(); j++) {
-                long stone = stones.get(j);
+            ArrayList<Long> newStones = new ArrayList<>();
+            for (long stone : stones) {
                 if (stone == 0) {
-                    stones.set(j, 1L);
+                    newStones.add(1L);
                 } else {
                     String stoneString = Long.toString(stone);
                     if (stoneString.length() % 2 == 0) {
-                        long newStone = Long.parseLong(stoneString.substring(0, stoneString.length() / 2));
-                        newStones.put(j, newStone);
-                        stones.set(j, Long.parseLong(stoneString.substring(stoneString.length() / 2)));
+                        newStones.add(Long.parseLong(stoneString.substring(0, stoneString.length() / 2)));
+                        newStones.add(Long.parseLong(stoneString.substring(stoneString.length() / 2)));
                     } else {
-                        stones.set(j, stone * 2024);
+                        newStones.add(stone * 2024);
                     }
                 }
             }
-            for (int j : newStones.keySet()) {
-                stones.add(j, newStones.get(j));
-            }
+            stones = newStones;
         }
         return stones.size();
     }
