@@ -15,20 +15,19 @@ public class Day12 implements Day {
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
         char[][] plants = Utils.toChars(file);
-        Point[][] points = initPoints(plants);
-        HashMap<Character, Set<Set<Point>>> regionsMap = getRegionsMap(plants, points);
-        return calcCost(points, plants, regionsMap);
+        HashMap<Character, Set<Set<Point>>> regionsMap = getRegionsMap(plants);
+        return calcCost(regionsMap);
     }
 
-    private HashMap<Character, Set<Set<Point>>> getRegionsMap(char[][] plants, Point[][] points) {
+    private HashMap<Character, Set<Set<Point>>> getRegionsMap(char[][] plants) {
         HashMap<Character, Set<Set<Point>>> regionsMap = new HashMap<>();
         Set<Point> visited = new HashSet<>();
-        for (int i = 0; i < points.length; i++) {
-            for (int j = 0; j < points[0].length; j++) {
-                Point point = points[i][j];
+        for (int i = 0; i < plants.length; i++) {
+            for (int j = 0; j < plants[i].length; j++) {
+                Point point = new Point(j, i);
                 if (visited.contains(point)) continue;
+                Set<Point> region = getRegion(plants, point);
                 char plant = plants[i][j];
-                Set<Point> region = getRegion(plants, point, points);
                 regionsMap.computeIfAbsent(plant, k -> new HashSet<>()).add(region);
                 visited.addAll(region);
             }
@@ -37,7 +36,7 @@ public class Day12 implements Day {
         return regionsMap;
     }
 
-    private Set<Point> getRegion(char[][] plants, Point point, Point[][] points) {
+    private Set<Point> getRegion(char[][] plants, Point point) {
         Set<Point> region = new HashSet<>();
         Stack<Point> stack = new Stack<>();
         stack.push(point);
@@ -45,7 +44,7 @@ public class Day12 implements Day {
             Point current = stack.pop();
             if (region.contains(current)) continue;
             region.add(current);
-            Set<Point> neighbors = getNeighbors(current, points);
+            Set<Point> neighbors = getNeighbors(current, plants);
             for (Point neighbor : neighbors) {
                 if (plants[neighbor.getY()][neighbor.getX()] == plants[current.getY()][current.getX()]) {
                     stack.push(neighbor);
@@ -55,60 +54,50 @@ public class Day12 implements Day {
         return region;
     }
 
-    private Set<Point> getNeighbors(Point point, Point[][] points) {
+    private Set<Point> getNeighbors(Point point, char[][] plants) {
         Set<Point> neighbors = new HashSet<>();
         if (point.getY() > 0) {
-            neighbors.add(points[point.getY() - 1][point.getX()]);
+            neighbors.add(new Point(point.getX(), point.getY() - 1));
         }
-        if (point.getY() < points.length - 1) {
-            neighbors.add(points[point.getY() + 1][point.getX()]);
+        if (point.getY() < plants.length - 1) {
+            neighbors.add(new Point(point.getX(), point.getY() + 1));
         }
         if (point.getX() > 0) {
-            neighbors.add(points[point.getY()][point.getX() - 1]);
+            neighbors.add(new Point(point.getX() - 1, point.getY()));
         }
-        if (point.getX() < points[0].length - 1) {
-            neighbors.add(points[point.getY()][point.getX() + 1]);
+        if (point.getX() < plants[point.getY()].length - 1) {
+            neighbors.add(new Point(point.getX() + 1, point.getY()));
         }
         return neighbors;
     }
 
-    private static int calcCost(Point[][] points, char[][] plants, HashMap<Character, Set<Set<Point>>> regionsMap) {
+    private static int calcCost(HashMap<Character, Set<Set<Point>>> regionsMap) {
         int cost = 0;
         for (Set<Set<Point>> regions : regionsMap.values()) {
             for (Set<Point> region : regions) {
-                cost += getPerimeter(points, plants, region) * region.size();
+                cost += getPerimeter(region) * region.size();
             }
         }
         return cost;
     }
 
-    private static int getPerimeter(Point[][] points, char[][] plants, Set<Point> region) {
+    private static int getPerimeter(Set<Point> region) {
         int perimeter = 0;
         for (Point point : region) {
-            if (point.getY() == 0 || !region.contains(points[point.getY() - 1][point.getX()])) {
+            if (!region.contains(new Point(point.getX(), point.getY() - 1))) {
                 perimeter++;
             }
-            if (point.getY() == plants.length - 1 || !region.contains(points[point.getY() + 1][point.getX()])) {
+            if (!region.contains(new Point(point.getX(), point.getY() + 1))) {
                 perimeter++;
             }
-            if (point.getX() == 0 || !region.contains(points[point.getY()][point.getX() - 1])) {
+            if (!region.contains(new Point(point.getX() - 1, point.getY()))) {
                 perimeter++;
             }
-            if (point.getX() == plants[0].length - 1 || !region.contains(points[point.getY()][point.getX() + 1])) {
+            if (!region.contains(new Point(point.getX() + 1, point.getY()))) {
                 perimeter++;
             }
         }
         return perimeter;
-    }
-
-    private static Point[][] initPoints(char[][] plants) {
-        Point[][] points = new Point[plants.length][plants[0].length];
-        for (int i = 0; i < plants.length; i++) {
-            for (int j = 0; j < plants[0].length; j++) {
-                points[i][j] = new Point(j, i);
-            }
-        }
-        return points;
     }
 
     @Override
