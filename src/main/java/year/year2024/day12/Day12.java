@@ -16,7 +16,13 @@ public class Day12 implements Day {
     public Object puzzle1(File file) throws FileNotFoundException {
         char[][] plants = Utils.toChars(file);
         HashMap<Character, Set<Set<Point>>> regionsMap = getRegionsMap(plants);
-        return calcCost(regionsMap);
+        int cost = 0;
+        for (Set<Set<Point>> regions : regionsMap.values()) {
+            for (Set<Point> region : regions) {
+                cost += getPerimeter(region) * region.size();
+            }
+        }
+        return cost;
     }
 
     private HashMap<Character, Set<Set<Point>>> getRegionsMap(char[][] plants) {
@@ -71,16 +77,6 @@ public class Day12 implements Day {
         return neighbors;
     }
 
-    private static int calcCost(HashMap<Character, Set<Set<Point>>> regionsMap) {
-        int cost = 0;
-        for (Set<Set<Point>> regions : regionsMap.values()) {
-            for (Set<Point> region : regions) {
-                cost += getPerimeter(region) * region.size();
-            }
-        }
-        return cost;
-    }
-
     private static int getPerimeter(Set<Point> region) {
         int perimeter = 0;
         for (Point point : region) {
@@ -102,6 +98,89 @@ public class Day12 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        char[][] plants = Utils.toChars(file);
+        HashMap<Character, Set<Set<Point>>> regionsMap = getRegionsMap(plants);
+        int cost = 0;
+        for (Set<Set<Point>> regions : regionsMap.values()) {
+            for (Set<Point> region : regions) {
+                cost += getSides(region) * region.size();
+            }
+        }
+        return cost;
+    }
+
+    private int getSides(Set<Point> region) {
+        int sides = 0;
+        for (Point point : region) {
+            if (isInnerTopLeftCorner(point, region)) {
+                sides++;
+            }
+            if (isInnerTopRightCorner(point, region)) {
+                sides++;
+            }
+            if (isInnerBottomLeftCorner(point, region)) {
+                sides++;
+            }
+            if (isInnerBottomRightCorner(point, region)) {
+                sides++;
+            }
+            if (isOuterTopLeftCorner(point, region)) {
+                sides++;
+            }
+            if (isOuterTopRightCorner(point, region)) {
+                sides++;
+            }
+            if (isOuterBottomLeftCorner(point, region)) {
+                sides++;
+            }
+            if (isOuterBottomRightCorner(point, region)) {
+                sides++;
+            }
+        }
+        return sides;
+    }
+
+    private boolean isInnerTopLeftCorner(Point point, Set<Point> region) {
+        return !region.contains(new Point(point.getX() - 1, point.getY()))
+                && !region.contains(new Point(point.getX(), point.getY() - 1));
+    }
+
+    private boolean isInnerTopRightCorner(Point point, Set<Point> region) {
+        return !region.contains(new Point(point.getX() + 1, point.getY()))
+                && !region.contains(new Point(point.getX(), point.getY() - 1));
+    }
+
+    private boolean isInnerBottomLeftCorner(Point point, Set<Point> region) {
+        return !region.contains(new Point(point.getX() - 1, point.getY()))
+                && !region.contains(new Point(point.getX(), point.getY() + 1));
+    }
+
+    private boolean isInnerBottomRightCorner(Point point, Set<Point> region) {
+        return !region.contains(new Point(point.getX() + 1, point.getY()))
+                && !region.contains(new Point(point.getX(), point.getY() + 1));
+    }
+
+    private boolean isOuterTopLeftCorner(Point point, Set<Point> region) {
+        return !region.contains(new Point(point.getX() + 1, point.getY() + 1))
+                && region.contains(new Point(point.getX() + 1, point.getY()))
+                && region.contains(new Point(point.getX(), point.getY() + 1));
+    }
+
+    private boolean isOuterTopRightCorner(Point point, Set<Point> region) {
+        return !region.contains(new Point(point.getX() - 1, point.getY() + 1))
+                && region.contains(new Point(point.getX() - 1, point.getY()))
+                && region.contains(new Point(point.getX(), point.getY() + 1));
+    }
+
+    private boolean isOuterBottomLeftCorner(Point point, Set<Point> region) {
+        return !region.contains(new Point(point.getX() + 1, point.getY() - 1))
+                && region.contains(new Point(point.getX() + 1, point.getY()))
+                && region.contains(new Point(point.getX(), point.getY() - 1));
+    }
+
+    private boolean isOuterBottomRightCorner(Point point, Set<Point> region) {
+        return !region.contains(new Point(point.getX() - 1, point.getY() - 1))
+                && region.contains(new Point(point.getX() - 1, point.getY()))
+                && region.contains(new Point(point.getX(), point.getY() - 1));
     }
 }
