@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Day11 implements Day {
@@ -32,45 +33,36 @@ public class Day11 implements Day {
         return stones.size();
     }
 
-    private final HashMap<Long, HashMap<Integer, Long>> map = new HashMap<>();
-
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        ArrayList<Long> stones = parse(file);
-        long newStones = 0;
-        for (long stone : stones) {
-            newStones += expandTree(stone, 0);
+        ArrayList<Long> list = parse(file);
+        HashMap<Long, Long> stones = new HashMap<>();
+        for (long stone : list) {
+            stones.put(stone, 1L);
         }
-        return stones.size() + newStones;
-    }
-
-    private long expandTree(long stone, int i) {
-        long newStones = 0;
-        long originalStone = stone;
-
-        for (int j = i; j < 75; j++) {
-            if (map.containsKey(stone) && map.get(stone).containsKey(j)) {
-                newStones += map.get(stone).get(j);
-                break;
-            }
-
-            if (stone == 0) {
-                stone = 1L;
-            } else {
-                String stoneString = Long.toString(stone);
-                if (stoneString.length() % 2 == 0) {
-                    long firstHalf = Long.parseLong(stoneString.substring(0, stoneString.length() / 2));
-                    long secondHalf = Long.parseLong(stoneString.substring(stoneString.length() / 2));
-                    stone = firstHalf;
-                    newStones += 1 + expandTree(secondHalf, j + 1);
+        for (int i = 0; i < 75; i++) {
+            HashMap<Long, Long> newStones = new HashMap<>();
+            for (Map.Entry<Long, Long> entry : stones.entrySet()) {
+                long stone = entry.getKey();
+                long count = entry.getValue();
+                if (stone == 0) {
+                    newStones.put(1L, newStones.getOrDefault(1L, 0L) + count);
                 } else {
-                    stone *= 2024;
+                    String stoneString = Long.toString(stone);
+                    if (stoneString.length() % 2 == 0) {
+                        long firstHalf = Long.parseLong(stoneString.substring(0, stoneString.length() / 2));
+                        long secondHalf = Long.parseLong(stoneString.substring(stoneString.length() / 2));
+                        newStones.put(firstHalf, newStones.getOrDefault(firstHalf, 0L) + count);
+                        newStones.put(secondHalf, newStones.getOrDefault(secondHalf, 0L) + count);
+                    } else {
+                        long newStone = stone * 2024;
+                        newStones.put(newStone, newStones.getOrDefault(newStone, 0L) + count);
+                    }
                 }
             }
+            stones = newStones;
         }
-
-        map.computeIfAbsent(originalStone, k -> new HashMap<>()).put(i, newStones);
-        return newStones;
+        return stones.values().stream().mapToLong(Long::longValue).sum();
     }
 
     private static ArrayList<Long> parse(File file) throws FileNotFoundException {
