@@ -51,6 +51,36 @@ public class Day13 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        return null;
+        /*
+        ax = A.x
+        ay = A.y
+        bx = B.x
+        by = B.y
+        x = prize.x
+        y = prize.y
+
+        x = ax * i + bx * j
+        y = ay * i + by * j
+        i = (x * by - y * bx) / (ax * by - ay * bx)
+        j = (x - ax * i) / bx
+         */
+        ArrayList<Machine> machines = parse(file);
+        long tokens = 0;
+        for (Machine machine : machines) {
+            int ax = machine.getA().getX();
+            int ay = machine.getA().getY();
+            int bx = machine.getB().getX();
+            int by = machine.getB().getY();
+            long x = (long) (machine.getPrize().getX() + Math.pow(10, 13));
+            long y = (long) (machine.getPrize().getY() + Math.pow(10, 13));
+
+            long i = (x * by - y * bx) / ((long) ax * by - (long) ay * bx);
+            long j = (x - ax * i) / bx;
+
+            if (i >= 0 && j >= 0 && ax * i + bx * j == x && ay * i + by * j == y) {
+                tokens += i * 3 + j;
+            }
+        }
+        return tokens;
     }
 }
