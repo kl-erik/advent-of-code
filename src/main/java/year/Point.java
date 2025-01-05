@@ -10,6 +10,10 @@ public class Point {
         this.y = y;
     }
 
+    public Point add(Point point) {
+        return new Point(x + point.x, y + point.y);
+    }
+
     public int getX() {
         return x;
     }
