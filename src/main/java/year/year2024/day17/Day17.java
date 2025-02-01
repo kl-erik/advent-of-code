@@ -4,7 +4,6 @@ import year.Day;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -42,6 +41,28 @@ public class Day17 implements Day {
         return result.substring(0, result.length() - 1);
     }
 
+    @Override
+    public Object puzzle2(File file) throws FileNotFoundException {
+        Input computer = parse(file);
+        return findA(0, 0, computer.prog);
+    }
+
+    private static int findA(int a, int i, int[] ints) {
+        if (i == ints.length) {
+            return a;
+        }
+
+        while (fun(a, i) % 8 != ints[i]) {
+            a += (int) Math.pow(8, i + 1);
+        }
+
+        return findA(a, i + 1, ints);
+    }
+
+    private static int fun(int a, int i) {
+        return Math.floorDiv(a, (int) Math.pow(8, i + 1));
+    }
+
     private int getCombo(int operand, Input computer) {
         return switch (operand) {
             case 4 -> computer.a;
@@ -50,12 +71,6 @@ public class Day17 implements Day {
             case 7 -> throw new IllegalArgumentException("Invalid operand");
             default -> operand;
         };
-    }
-
-    @Override
-    public Object puzzle2(File file) throws FileNotFoundException {
-        // TODO: Implement puzzle2
-        return null;
     }
 
     private Input parse(File file) throws FileNotFoundException {

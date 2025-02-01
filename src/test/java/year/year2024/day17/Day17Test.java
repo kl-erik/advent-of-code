@@ -9,10 +9,10 @@ public class Day17Test extends TestCase {
     Day17 day = new Day17();
 
     public void testPuzzle1() throws FileNotFoundException {
-        assertEquals("4,6,3,5,6,3,5,2,1,0", day.puzzle1(new File("src/test/resources/year2024/input_17.txt")));
+        assertEquals("4,6,3,5,6,3,5,2,1,0", day.puzzle1(new File("src/test/resources/year2024/input_17-1.txt")));
     }
 
     public void testPuzzle2() throws FileNotFoundException {
-        // assertEquals(null, day.puzzle2(new File("src/test/resources/year2024/input_17.txt")));
+        assertEquals(117440, day.puzzle2(new File("src/test/resources/year2024/input_17-2.txt")));
     }
 }
