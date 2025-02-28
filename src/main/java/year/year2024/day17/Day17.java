@@ -5,8 +5,11 @@ import year.Day;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Day17 implements Day {
     static List<Integer> comboOpCodesList = Arrays.asList(0, 2, 5, 6, 7);
@@ -45,50 +48,62 @@ public class Day17 implements Day {
     public Object puzzle2(File file) throws FileNotFoundException {
         Input computer = parse(file);
         computer.a = 0;
-        if (file.getPath().contains("test")) {
-            return findA(computer, 0);
-        } else {
-            return findB(computer, 0);
-        }
+        return file.getPath().contains("test")
+                ? outputA(computer, computer.prog.length - 1)
+                : outputB(computer, computer.prog.length - 1);
     }
 
-    private static long findA(Input computer, int i) {
-        if (i == computer.prog.length) {
+    private static long outputA(Input computer, int i) {
+        if (i < 0) {
             return computer.a;
         }
 
-        while (fun(computer, i + 1).a % 8 != computer.prog[i]) {
-            computer.a += (long) Math.pow(8, i + 1);
+        long tmp = computer.a << 3;
+        computer.a = 0;
+
+        while (run(computer).a % 8 != computer.prog[i]) {
+            computer.a++;
         }
 
-        return findA(computer, i + 1);
+        computer.a += tmp;
+
+        return outputA(computer, i - 1);
     }
 
-    private static long findB(Input computer, int i) {
-        if (i == computer.prog.length) {
+    private static long outputB(Input computer, int i) {
+        if (i < 0) {
             return computer.a;
         }
 
-        while (fun(computer, i + 1).b % 8 != computer.prog[i]) {
-            computer.a += (long) Math.pow(8, i + 1);
+        Set<Long> solutions = new HashSet<>();
+
+        long tmp = computer.a << 3;
+
+        for (int j = 0; j < 8; j++) {
+            computer.a = j + tmp;
+
+            if (run(computer).b % 8 == computer.prog[i]) {
+                try {
+                    solutions.add(outputB(computer, i - 1));
+                } catch (NoSuchElementException ignored) {
+                }
+            }
         }
 
-        return findB(computer, i + 1);
+        return solutions.stream().mapToLong(Long::longValue).min().orElseThrow();
     }
 
-    private static Input fun(Input computer, int i) {
+    private static Input run(Input computer) {
         Input clone = new Input(computer.a, computer.b, computer.c, computer.prog);
 
-        for (int j = 0; j < i; j++) {
-            for (int k = 0; k < clone.prog.length - 4; k += 2) {
-                int opcode = clone.prog[k];
-                int operand = clone.prog[k + 1];
+        for (int k = 0; k < clone.prog.length - 4; k += 2) {
+            int opcode = clone.prog[k];
+            int operand = clone.prog[k + 1];
 
-                if (comboOpCodesList.contains(opcode)) {
-                    update(opcode, getCombo(operand, clone), clone);
-                } else {
-                    update(opcode, operand, clone);
-                }
+            if (comboOpCodesList.contains(opcode)) {
+                update(opcode, getCombo(operand, clone), clone);
+            } else {
+                update(opcode, operand, clone);
             }
         }
 
@@ -103,37 +118,6 @@ public class Day17 implements Day {
             case 4 -> computer.b ^= computer.c;
             case 6 -> computer.b = computer.a / (int) Math.pow(2, operand);
             case 7 -> computer.c = computer.a / (int) Math.pow(2, operand);
-            default -> throw new IllegalArgumentException("Invalid opcode");
-        }
-    }
-
-    private static Input inverseFun(Input computer, int i) {
-        Input clone = new Input(computer.a, computer.b, computer.c, computer.prog);
-
-        for (int j = 0; j < i; j++) {
-            for (int k = clone.prog.length - 6; k >= 0; k -= 2) {
-                int opcode = clone.prog[k];
-                int operand = clone.prog[k + 1];
-
-                if (comboOpCodesList.contains(opcode)) {
-                    inverseUpdate(opcode, getCombo(operand, clone), clone);
-                } else {
-                    inverseUpdate(opcode, operand, clone);
-                }
-            }
-        }
-
-        return clone;
-    }
-
-    private static void inverseUpdate(int opcode, long operand, Input computer) {
-        switch (opcode) {
-            case 0 -> computer.a *= (int) Math.pow(2, operand);
-            case 1 -> computer.b ^= operand;
-            case 2 -> computer.b = (computer.b + 8 - operand % 8) % 8;
-            case 4 -> computer.b ^= computer.c;
-            case 6 -> computer.b = computer.a * (int) Math.pow(2, operand);
-            case 7 -> computer.c = computer.a * (int) Math.pow(2, operand);
             default -> throw new IllegalArgumentException("Invalid opcode");
         }
     }
