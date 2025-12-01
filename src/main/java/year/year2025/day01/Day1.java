@@ -25,7 +25,7 @@ public class Day1 implements Day {
             }
 
             if (pointer == 0) {
-                value += 1;
+                value++;
             }
         }
 
@@ -34,11 +34,33 @@ public class Day1 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
+        int value = 0;
+        int pointer = 50;
+
         Scanner sc = new Scanner(file);
-        String line = sc.nextLine();
-        if (line.equals("hej")) {
-            return 0;
+        while (sc.hasNextLine()) {
+            String rotation = sc.nextLine();
+            char direction = rotation.charAt(0);
+            int steps = Integer.parseInt(rotation.substring(1));
+
+            value += steps / 100;
+            steps %= 100;
+
+            if (direction == 'R') {
+                if (pointer + steps >= 100) {
+                    value++;
+                }
+                pointer = (pointer + steps) % 100;
+            } else {
+                if (pointer != 0) {
+                    if (pointer - steps <= 0) {
+                        value++;
+                    }
+                }
+                pointer = (pointer - steps + 100) % 100;
+            }
         }
-        return 1;
+
+        return value;
     }
 }
