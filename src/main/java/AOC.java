@@ -34,7 +34,7 @@ public class AOC {
                 new year.year2024.day16.Day16(), new year.year2024.day17.Day17()
         };
         aoc[3] = new Day[]{
-                new year.year2025.day01.Day1(), /*new year.year2025.day02.Day2(), new year.year2025.day03.Day3(),
+                new year.year2025.day01.Day1(), new year.year2025.day02.Day2(), /*new year.year2025.day03.Day3(),
                 new year.year2025.day04.Day4(), new year.year2025.day05.Day5(), new year.year2025.day06.Day6(),
                 new year.year2025.day07.Day7(), new year.year2025.day08.Day8(), new year.year2025.day09.Day9(),
                 new year.year2025.day10.Day10(), new year.year2025.day11.Day11(), new year.year2025.day12.Day12(),
@@ -42,11 +42,11 @@ public class AOC {
                 new year.year2025.day16.Day16(), new year.year2025.day17.Day17()*/
         };
 
-        int day = 1;
+        int day = 2;
         int year = 2025;
 
         String path = "src/main/resources/year" + year + "/input_" + (day <= 9 ? "0" : "") + day + ".txt";
-        // System.out.println(aoc[year - 2022][day - 1].puzzle1(new File(path)));
-        System.out.println(aoc[year - 2022][day - 1].puzzle2(new File(path)));
+        System.out.println(aoc[year - 2022][day - 1].puzzle1(new File(path)));
+        // System.out.println(aoc[year - 2022][day - 1].puzzle2(new File(path)));
     }
 }
