@@ -9,8 +9,8 @@ create_files() {
   local test_dir="src/test/java/year/year${year}/day${day}"
   local main_input_dir="src/main/resources/year${year}"
   local test_input_dir="src/test/resources/year${year}"
-  local main_file="${main_dir}/Day${day}.java"
-  local test_file="${test_dir}/Day${day}Test.java"
+  local main_file="${main_dir}/Day$2.java"
+  local test_file="${test_dir}/Day$2Test.java"
   local main_input_file="${main_input_dir}/input_${day}.txt"
   local test_input_file="${test_input_dir}/input_${day}.txt"
 
@@ -33,7 +33,7 @@ import year.Day;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class Day${day} implements Day {
+public class Day$2 implements Day {
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
         // TODO: Implement puzzle1
@@ -57,8 +57,8 @@ import junit.framework.TestCase;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class Day${day}Test extends TestCase {
-    Day${day} day = new Day${day}();
+public class Day$2Test extends TestCase {
+    Day$2 day = new Day$2();
 
     public void testPuzzle1() throws FileNotFoundException {
         // assertEquals(null, day.puzzle1(new File("${test_input_file}")));

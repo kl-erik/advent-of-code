@@ -42,7 +42,20 @@ public abstract class Utils {
 
         return value.toString();
     }
+    public static int[][] rotateIntMatrix90Degrees(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
 
+        int[][] rotatedState = new int[n][m];
+
+        for (int row = 0; row < m; row++) {
+            for (int col = 0; col < n; col++) {
+                rotatedState[col][m-row-1] = matrix[row][col];
+            }
+        }
+
+        return rotatedState;
+    }
 
     public static char[][] rotateCharMatrix90Degrees(char[][] matrix) {
         int m = matrix.length;
@@ -71,6 +84,15 @@ public abstract class Utils {
         }
 
         return rotatedMatrix;
+    }
+
+    public static void reverse(int[][] input) {
+        int n = input.length;
+        for (int i = 0; i < n / 2; i++) {
+            int[] temp = input[i];
+            input[i] = input[n - i - 1];
+            input[n - i - 1] = temp;
+        }
     }
 
     public static int[] toInts(String[] split) {
