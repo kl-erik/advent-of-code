@@ -95,6 +95,15 @@ public abstract class Utils {
         }
     }
 
+    public static void reverse(char[] input) {
+        int n = input.length;
+        for (int i = 0; i < n / 2; i++) {
+            char temp = input[i];
+            input[i] = input[n - i - 1];
+            input[n - i - 1] = temp;
+        }
+    }
+
     public static int[] toInts(String[] split) {
         int[] ints = new int[split.length];
         for (int i = 0; i < ints.length; i++) {

@@ -5,7 +5,9 @@ import year.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import static year.Utils.*;
@@ -53,7 +55,61 @@ public class Day6 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        // TODO: Implement puzzle2
-        return null;
+        List<String> lines = Utils.getLines(file);
+        char[] ops = lines.remove(lines.size() - 1).trim().replace(" ", "").toCharArray();
+        reverse(ops);
+        padWithSpaces(lines);
+        char[][] charMatrix = new char[lines.size()][lines.get(0).length()];
+        for (int i = 0; i < lines.size(); i++) {
+            charMatrix[i] = lines.get(i).toCharArray();
+        }
+        for (int i = 0; i < 3; i++) {
+            charMatrix = rotateCharMatrix90Degrees(charMatrix);
+        }
+        List<Long> answers = new ArrayList<>();
+        int i = 0;
+        for (char op : ops) {
+            switch (op) {
+                case '+':
+                    long sum = 0;
+                    for (int j = i; j < charMatrix.length; j++) {
+                        String value = new String(charMatrix[j]).trim();
+                        if (value.isEmpty()) {
+                            i = j + 1;
+                            break;
+                        }
+                        sum += Integer.parseInt(value);
+                    }
+                    answers.add(sum);
+                    break;
+                case '*':
+                    long product = 1;
+                    for (int j = i; j < charMatrix.length; j++) {
+                        String value = new String(charMatrix[j]).trim();
+                        if (value.isEmpty()) {
+                            i = j + 1;
+                            break;
+                        }
+                        product *= Integer.parseInt(value);
+                    }
+                    answers.add(product);
+                    break;
+            }
+        }
+        return answers.stream().mapToLong(Long::longValue).sum();
+    }
+
+    private static void padWithSpaces(List<String> lines) {
+        int longestLine = 0;
+        for (String line : lines) {
+            if (line.length() > longestLine) {
+                longestLine = line.length();
+            }
+        }
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            lines.add(i, line + " ".repeat(longestLine - line.length()));
+            lines.remove(i + 1);
+        }
     }
 }
