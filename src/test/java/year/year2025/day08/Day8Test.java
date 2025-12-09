@@ -15,6 +15,6 @@ public class Day8Test extends TestCase {
     }
 
     public void testPuzzle2() throws FileNotFoundException {
-        // assertEquals(null, day.puzzle2(new File("src/test/resources/year2025/input_08.txt")));
+        assertEquals(25272, day.puzzle2(new File("src/test/resources/year2025/input_08.txt")));
     }
 }

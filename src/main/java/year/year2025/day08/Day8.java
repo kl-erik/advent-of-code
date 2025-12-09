@@ -59,8 +59,36 @@ public class Day8 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        // TODO: Implement puzzle2
-        return null;
+        List<Point> points = parse(file);
+        PriorityQueue<Pair> pairsSortedByShortestDistance = new PriorityQueue<>(Comparator.comparingDouble(a -> a.distance));
+        for (int i = 0; i < points.size() - 1; i++) {
+            Point p1 = points.get(i);
+            for (int j = i + 1; j < points.size(); j++) {
+                Point p2 = points.get(j);
+                Pair pair = new Pair(p1, p2, p1.distanceTo(p2));
+                pairsSortedByShortestDistance.add(pair);
+            }
+        }
+        List<Set<Point>> circuits = new ArrayList<>();
+        for (Point point : points) {
+            Set<Point> circuit = new HashSet<>();
+            circuit.add(point);
+            circuits.add(circuit);
+        }
+        while (!pairsSortedByShortestDistance.isEmpty()) {
+            Pair pair = pairsSortedByShortestDistance.poll();
+            Set<Point> p1Circuit = findCircuit(circuits, pair.p1);
+            Set<Point> p2Circuit = findCircuit(circuits, pair.p2);
+            if (p1Circuit == p2Circuit) {
+                continue;
+            }
+            p1Circuit.addAll(p2Circuit);
+            circuits.remove(p2Circuit);
+            if (circuits.size() == 1) {
+                return pair.p1.x * pair.p2.x;
+            }
+        }
+        throw new IllegalStateException("All points are not connected");
     }
 
     private List<Point> parse(File file) throws FileNotFoundException {
