@@ -42,7 +42,7 @@ public class AOC {
                 new year.year2025.day16.Day16(), new year.year2025.day17.Day17()*/
         };
 
-        int day = 9;
+        int day = 8;
         int year = 2025;
 
         String path = "src/main/resources/year" + year + "/input_" + (day <= 9 ? "0" : "") + day + ".txt";

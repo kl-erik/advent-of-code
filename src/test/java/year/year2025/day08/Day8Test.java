@@ -4,12 +4,14 @@ import junit.framework.TestCase;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Day8Test extends TestCase {
     Day8 day = new Day8();
 
     public void testPuzzle1() throws FileNotFoundException {
-        // assertEquals(null, day.puzzle1(new File("src/test/resources/year2025/input_08.txt")));
+        assertEquals(40, day.puzzle1(new File("src/test/resources/year2025/input_08.txt")));
     }
 
     public void testPuzzle2() throws FileNotFoundException {
