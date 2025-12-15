@@ -15,27 +15,21 @@ import java.util.Set;
 public class Day10 implements Day {
     @Override
     public Object puzzle1(File file) throws FileNotFoundException {
-        Scanner sc = new Scanner(file);
-        List<Machine> machines = parse(sc);
-        int minPresses = 0;
-        for (Machine machine : machines) {
-            minPresses += findMinPresses(machine);
-        }
-        return minPresses;
+        List<Machine> machines = parse(file);
+        return machines.stream().mapToInt(this::findMinToggles).sum();
     }
 
-    private int findMinPresses(Machine machine) {
-        char[] lights = machine.lights;
+    private int findMinToggles(Machine machine) {
+        char[] finalState = machine.state;
         int[][] buttons = machine.buttons;
 
+        char[] initState = new char[finalState.length];
+        Arrays.fill(initState, '.');
         for (int n = 0; n < buttons.length; n++) {
-            char[] newLights = new char[lights.length];
-            Arrays.fill(newLights, '.');
+            Set<Result> results = toggleButtons(initState, buttons, n, 0);
 
-            Set<Light> results = pressButtons(newLights, buttons, n, 0);
-
-            for (Light result : results) {
-                if (Arrays.equals(result.lights, lights)) {
+            for (Result result : results) {
+                if (Arrays.equals(result.state, finalState)) {
                     return n;
                 }
             }
@@ -44,28 +38,27 @@ public class Day10 implements Day {
         throw new IllegalArgumentException("No solution found");
     }
 
-    private Set<Light> pressButtons(char[] lights, int[][] buttons, int n, int i) {
+    private Set<Result> toggleButtons(char[] state, int[][] buttons, int n, int i) {
         if (n == 0) {
-            return Collections.singleton(new Light((lights)));
+            return Collections.singleton(new Result((state)));
         }
 
-        Set<Light> results = new HashSet<>(Collections.emptySet());
+        Set<Result> results = new HashSet<>();
 
-        char[] newLights = Arrays.copyOf(lights, lights.length);
         for (int j = i; j < buttons.length; j++) {
-            char[] pressedLights = pressButton(newLights, buttons[j]);
-            results.addAll(pressButtons(pressedLights, buttons, n - 1, j + 1));
+            char[] newState = toggleButton(state, buttons[j]);
+            results.addAll(toggleButtons(newState, buttons, n - 1, j + 1));
         }
 
         return results;
     }
 
-    private char[] pressButton(char[] lights, int[] button) {
-        char[] newLights = Arrays.copyOf(lights, lights.length);
+    private char[] toggleButton(char[] state, int[] button) {
+        char[] newState = Arrays.copyOf(state, state.length);
         for (int index : button) {
-            newLights[index] = newLights[index] == '.' ? '#' : '.';
+            newState[index] = newState[index] == '.' ? '#' : '.';
         }
-        return newLights;
+        return newState;
     }
 
     @Override
@@ -74,36 +67,37 @@ public class Day10 implements Day {
         return null;
     }
 
-    private List<Machine> parse(Scanner sc) {
+    private List<Machine> parse(File file) throws FileNotFoundException {
         List<Machine> machines = new ArrayList<>();
+        Scanner sc = new Scanner(file);
         while (sc.hasNextLine()) {
             String[] split = sc.nextLine().split(" ");
-            char[] lights = split[0].substring(1, split[0].length() - 1).toCharArray();
+            char[] state = split[0].substring(1, split[0].length() - 1).toCharArray();
             int[][] buttons = new int[split.length - 2][];
             for (int i = 1; i < split.length - 1; i++) {
                 int[] button = Arrays.stream(split[i].substring(1, split[i].length() - 1).split(",")).mapToInt(Integer::parseInt).toArray();
                 buttons[i - 1] = button;
             }
-            machines.add(new Machine(lights, buttons));
+            machines.add(new Machine(state, buttons));
         }
         return machines;
     }
 
     private static class Machine {
-        private final char[] lights;
+        private final char[] state;
         private final int[][] buttons;
 
-        public Machine(char[] lights, int[][] buttons) {
-            this.lights = lights;
+        public Machine(char[] state, int[][] buttons) {
+            this.state = state;
             this.buttons = buttons;
         }
     }
 
-    private static class Light {
-        private final char[] lights;
+    private static class Result {
+        private final char[] state;
 
-        public Light(char[] lights) {
-            this.lights = lights;
+        public Result(char[] state) {
+            this.state = state;
         }
     }
 }
