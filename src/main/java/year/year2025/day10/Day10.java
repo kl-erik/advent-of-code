@@ -1,5 +1,10 @@
 package year.year2025.day10;
 
+import com.google.ortools.Loader;
+import com.google.ortools.linearsolver.MPConstraint;
+import com.google.ortools.linearsolver.MPObjective;
+import com.google.ortools.linearsolver.MPSolver;
+import com.google.ortools.linearsolver.MPVariable;
 import year.Day;
 
 import java.io.File;
@@ -63,8 +68,71 @@ public class Day10 implements Day {
 
     @Override
     public Object puzzle2(File file) throws FileNotFoundException {
-        // TODO: Implement puzzle2
-        return null;
+        Loader.loadNativeLibraries();
+        MPSolver solver = MPSolver.createSolver("SAT");
+        if (solver == null) {
+            throw new RuntimeException("Could not create solver");
+        }
+
+        List<Machine> machines = parse(file);
+        int[] values = new int[machines.size()];
+
+        for (int machineIndex = 0; machineIndex < machines.size(); machineIndex++) {
+            Machine machine = machines.get(machineIndex);
+
+            // each button is a variable
+            MPVariable[] variables = new MPVariable[machine.buttons.length];
+            for (int i = 0; i < variables.length; i++) {
+                variables[i] = solver.makeIntVar(0, Integer.MAX_VALUE, "x" + i);
+            }
+
+            // each limit is a constraint (same lb and ub results in an equals constraint)
+            MPConstraint[] constraints = new MPConstraint[machine.limits.length];
+            for (int i = 0; i < machine.limits.length; i++) {
+                constraints[i] = solver.makeConstraint(machine.limits[i], machine.limits[i]);
+            }
+
+            // combine variables and constraints
+            int[][] coefficients = getCoefficients(machine.limits, machine.buttons);
+            for (int i = 0; i < coefficients.length; i++) {
+                for (int j = 0; j < coefficients[i].length; j++) {
+                    constraints[i].setCoefficient(variables[j], coefficients[i][j]);
+                }
+            }
+
+            // objective is to minimize the sum of the variables
+            MPObjective objective = solver.objective();
+            for (MPVariable variable : variables) {
+                objective.setCoefficient(variable, 1);
+            }
+            objective.setMinimization();
+
+            MPSolver.ResultStatus resultStatus = solver.solve();
+
+            if (resultStatus != MPSolver.ResultStatus.OPTIMAL) {
+                throw new RuntimeException("No optimal solution found");
+            }
+
+            values[machineIndex] = (int) objective.value();
+            solver.clear();
+        }
+
+        return Arrays.stream(values).sum();
+    }
+
+    private static int[][] getCoefficients(int[] limits, int[][] buttons) {
+        int[][] coefficients = new int[limits.length][buttons.length];
+        for (int i = 0; i < limits.length; i++) {
+            for (int j = 0; j < buttons.length; j++) {
+                for (int bI : buttons[j]) {
+                    if (bI == i) {
+                        coefficients[i][j] = 1;
+                        break;
+                    }
+                }
+            }
+        }
+        return coefficients;
     }
 
     private List<Machine> parse(File file) throws FileNotFoundException {
@@ -78,7 +146,8 @@ public class Day10 implements Day {
                 int[] button = Arrays.stream(split[i].substring(1, split[i].length() - 1).split(",")).mapToInt(Integer::parseInt).toArray();
                 buttons[i - 1] = button;
             }
-            machines.add(new Machine(state, buttons));
+            int[] limits = Arrays.stream(split[split.length - 1].substring(1, split[split.length - 1].length() - 1).split(",")).mapToInt(Integer::parseInt).toArray();
+            machines.add(new Machine(state, buttons, limits));
         }
         return machines;
     }
@@ -86,10 +155,12 @@ public class Day10 implements Day {
     private static class Machine {
         private final char[] state;
         private final int[][] buttons;
+        private final int[] limits;
 
-        public Machine(char[] state, int[][] buttons) {
+        public Machine(char[] state, int[][] buttons, int[] limits) {
             this.state = state;
             this.buttons = buttons;
+            this.limits = limits;
         }
     }
 

@@ -46,7 +46,7 @@ public class AOC {
         int year = 2025;
 
         String path = "src/main/resources/year" + year + "/input_" + (day <= 9 ? "0" : "") + day + ".txt";
-        System.out.println(aoc[year - 2022][day - 1].puzzle1(new File(path)));
-        // System.out.println(aoc[year - 2022][day - 1].puzzle2(new File(path)));
+        // System.out.println(aoc[year - 2022][day - 1].puzzle1(new File(path)));
+        System.out.println(aoc[year - 2022][day - 1].puzzle2(new File(path)));
     }
 }
